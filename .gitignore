@@ -1,0 +1,6 @@
+/target
+/src/main/java/fm/weplayfootball/config/application.properties
+/.settings
+.classpath
+.project
+.DS_Store
