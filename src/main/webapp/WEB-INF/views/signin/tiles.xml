@@ -3,8 +3,9 @@
 
 <tiles-definitions>
 
-	<definition name="signin" extends="page">
+	<definition name="signin" extends="page-wFooter">
 		<put-attribute name="content" value="/WEB-INF/views/signin/signin.jsp" />
+		<put-attribute name="javascript" value="/WEB-INF/views/signin/signin-js.jsp" />
 	</definition>
 
 </tiles-definitions>

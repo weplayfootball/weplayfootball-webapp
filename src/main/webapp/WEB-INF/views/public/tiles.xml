@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+	<definition name="public/contact" extends="page-wFooter">
+		<put-attribute name="content" value="/WEB-INF/views/public/contact.jsp" />
+	</definition>
+	<definition name="public/help" extends="page-wFooter">
+		<put-attribute name="content" value="/WEB-INF/views/public/help.jsp" />
+	</definition>
+	<definition name="public/service" extends="page-wFooter">
+		<put-attribute name="content" value="/WEB-INF/views/public/service.jsp" />
+	</definition>
+	<definition name="public/policy" extends="page-wFooter">
+		<put-attribute name="content" value="/WEB-INF/views/public/policy.jsp" />
+	</definition>
+
+</tiles-definitions>

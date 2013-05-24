@@ -3,7 +3,7 @@
 
 <tiles-definitions>
 
-	<definition name="home" extends="page">
+	<definition name="home" extends="page-wFooter">
 		<put-attribute name="content" value="/WEB-INF/views/home/home.jsp" />
 	</definition>
 

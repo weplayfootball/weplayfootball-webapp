@@ -16,8 +16,10 @@
 		<intercept-url pattern="/signin/**" access="permitAll" />
 		<intercept-url pattern="/signup/**" access="permitAll" />
 		<intercept-url pattern="/disconnect/facebook" access="permitAll" />
-		<intercept-url pattern="/**" access="isAuthenticated()"  />
+		<intercept-url pattern="/public/**" access="permitAll" />
+		<intercept-url pattern="/home" access="permitAll" />
 		<intercept-url pattern="/" access="permitAll" />
+		<intercept-url pattern="/**" access="isAuthenticated()"  />
 	</http>
 
 	<authentication-manager alias="authenticationManager">

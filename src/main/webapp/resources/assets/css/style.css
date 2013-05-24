@@ -21,7 +21,7 @@ body {
     line-height:1.6;
 	font-family:'Nanum Gothic','Arial';
     -webkit-font-smoothing:antialiased;
-	background:#fff url("../img/bg.png");
+	/*background:#fff url("../img/bg.png");*/
 }
 
 p, a, li { 
@@ -50,6 +50,10 @@ h1, h2, h3, h4, h5 {
 } 
 h1 i, h2 i, h3 i, h4 i, h5 i {
 	margin-right:7px;
+}
+
+.navbar .nav {
+	font-family: 'Nanum Gothic', 'Open Sans', sans-serif;
 }
 
 /*Block headline*/
