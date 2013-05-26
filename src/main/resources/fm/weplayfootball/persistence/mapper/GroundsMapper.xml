@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fm.weplayfootball.persistence.mapper.GroundsMapper">
+
+  <cache />
+
+  <select id="listGlocaldo" resultType="String">
+	select glocaldo from grounds where guse = '대관가능' group by glocaldo order by glocaldo
+  </select>
+  <select id="listGlocalsi" parameterType="string" resultType="String">
+	select glocalsi from grounds where glocaldo = #{glocaldo} and guse = '대관가능' group by glocalsi order by glocalsi
+  </select>
+  <select id="listGname" parameterType="string" resultType="Grounds">
+	select gsno,gname from grounds where glocalsi = #{glocalsi} and glocaldo = #{glocaldo} and guse = '대관가능' order by gname 
+  </select>
+
+</mapper>

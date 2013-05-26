@@ -26,8 +26,8 @@
 		<authentication-provider>
 			<!-- password-encoder ref="passwordEncoder" / -->
 			<jdbc-user-service data-source-ref="dataSource" 
-							users-by-username-query="select useremail, passwd, 1 from FM_MEMBER where useremail = ?"
-							authorities-by-username-query="select useremail, 'ROLE_USER' from FM_MEMBER where useremail = ?"/>
+							users-by-username-query="select memail, mpasswd, 1 from MEMBER where memail = ?"
+							authorities-by-username-query="select memail, 'ROLE_USER' from MEMBER where memail = ?"/>
 		</authentication-provider>
 	</authentication-manager>
 	

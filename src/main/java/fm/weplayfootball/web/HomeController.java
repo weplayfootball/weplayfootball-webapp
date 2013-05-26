@@ -38,7 +38,7 @@ public class HomeController {
 	public void home(Principal currentUser, Model model) {
 		model.addAttribute("connectionsToProviders", getConnectionRepository().findAllConnections());
 		if(currentUser != null){
-		    model.addAttribute(memberMapper.getMemberByUseremail(currentUser.getName()));
+		    model.addAttribute(memberMapper.read(currentUser.getName()));
 		}
 	}
 	

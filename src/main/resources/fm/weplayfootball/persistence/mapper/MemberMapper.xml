@@ -6,38 +6,30 @@
 
   <cache />
 
-  <select id="getMemberByUseremail" parameterType="string" resultType="Member">
-	SELECT
-	      USEREMAIL,
-	      USERNAME,
-	      PASSWD,
-	      STATUS,
-	      ADDRESS1,
-	      ADDRESS2,
-	      CITY,
-	      STATE,
-	      ZIP,
-	      COUNTRY,
-	      PHONE,
-	      BIRTH,
-	      CREATED,
-	      UPDATED
-	 FROM FM_MEMBER
-	WHERE USEREMAIL = #{useremail}
+  
+  
+  <select id="read" parameterType="string" resultType="Member">
+	select * from member where memail =  #{memail}
+  </select>
+  <select id="readsno" parameterType="string" resultType="Member">
+	select * from member where msno =  #{msno}
   </select>
 
-  <insert id="insertMember" parameterType="Member">
+  <insert id="insert" parameterType="Member">
     INSERT INTO FM_MEMBER
-      (   USEREMAIL, USERNAME, PASSWD, STATUS,
-	      ADDRESS1, ADDRESS2, CITY, STATE, ZIP, COUNTRY,
-	      PHONE, BIRTH,
-	      CREATED)
-    VALUES
-      (	  
-      	#{useremail}, #{username}, #{passwd}, #{status,jdbcType=VARCHAR}, 
-      	#{address1,jdbcType=VARCHAR},  #{address2,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{zip,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, 
-      	#{phone,jdbcType=VARCHAR}, #{birth,jdbcType=VARCHAR}, 
-      	SYSDATE )
+      (	msno 	, mname 	, memail, 
+      	mpasswd , muid 		, mtel 	,
+      	mlevel	, mimage	, mimagesize ,
+      	mip 	, mposition	, mlocal, 
+      	mintro	, mpasswd
+      )
+    values
+      (	msno_seq.nextval			, #{mname} 						, #{memail},
+      	#{mpasswd,jdbcType=VARCHAR} , #{muid,jdbcType=VARCHAR} 		, #{mtel,jdbcType=VARCHAR},
+      	#{mlevel,jdbcType=CHAR}		, #{mimage,jdbcType=VARCHAR}	, #{mimagesize,jdbcType=NUMBER} ,
+      	#{mip,jdbcType=VARCHAR} 	, #{mposition,jdbcType=VARCHAR}	, #{mlocal,jdbcType=VARCHAR}, 
+      	#{mintro,jdbcType=VARCHAR}	, #{mpasswd}
+      )
   </insert>
 
 </mapper>

@@ -6,7 +6,7 @@
     <div class="container">         
         <ul id="loginbar" class="pull-right">
         	<c:if test="${not empty member}">
-        		<li>Welcome, <c:out value="${member.username}"/>!</li>
+        		<li>Welcome, <c:out value="${member.mname}"/>!</li>
 				<li class="devider">&nbsp;</li>
 			</c:if>
         	<li>
