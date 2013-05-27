@@ -79,6 +79,10 @@ public class SignupController {
 			BindingResult formBinding, WebRequest request, 
 			@RequestParam("profileFile") MultipartFile atchFile) {
 
+		if (formBinding.hasErrors()) {
+			return null;
+		}
+		
 		// 파일 업로드 !!!!
 		if(atchFile != null && !atchFile.isEmpty()){
 			FileOutputStream out = null;

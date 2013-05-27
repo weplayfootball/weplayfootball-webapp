@@ -39,10 +39,13 @@ public class DebugController {
 	@RequestMapping("/debug/member/{memail}")
 	@ResponseBody
 	public Member jsontest(@PathVariable String memail, Model model) {
-		return memberMapper.read(memail);
+		Member member = memberMapper.read(memail);
+		System.out.println(member);
+		return member;
 	}
 
 	@RequestMapping("/debug/session")
+	@ResponseBody
 	public User sessiontest(HttpServletRequest request) {
 
 		User retrnP = null;

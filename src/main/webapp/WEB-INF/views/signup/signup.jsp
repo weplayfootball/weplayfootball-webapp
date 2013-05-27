@@ -5,7 +5,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div id="body">
-	<div class="breadcrumbs margin-bottom-50">
+	<div class="breadcrumbs margin-bottom-20">
     	<div class="container">
             <h1 class="color-green pull-left subtitle">회원등록</h1>
             <ul class="pull-right breadcrumb">
@@ -16,7 +16,7 @@
     </div><!--/breadcrumbs-->
 
 	<div class="container">		
-		<div class="row-fluid margin-bottom-10">
+		<div class="row-fluid margin-bottom-20">
 		
 			<c:if test="${not empty message}">
 			<div class="alert alert-error">
@@ -33,19 +33,21 @@
 						<c:when test="${status.error}">
 							<div class="alert alert-error">
 				                <button type="button" class="close" data-dismiss="alert">&times;</button>
-				                Unable to sign up. Please fix the errors below and resubmit.
+				               	<strong>등록할 수 없습니다.</strong> 입력이 잘못된 부분을 다시 작성하시고 등록해주세요.
 				            </div>
 						</c:when>
+						<c:otherwise>
+							<div class="alert alert-success">
+							    <button type="button" class="close" data-dismiss="alert">&times;</button>
+				               		아래  정보를 입력하시면 회원가입이 완료됩니다.
+				            </div>
+			            </c:otherwise>
 					</c:choose>                     
 				</s:bind>
             
-				<div class="alert alert-block">
-				    <button type="button" class="close" data-dismiss="alert">&times;</button>
-	                정보를 입력하시면 회원가입이 완료됩니다.
-	            </div>
                 <div class="controls">    
                     <div class="span6">
-	                    <form:label path="mname">이름 <form:errors path="mname" cssClass="error" /><span class="color-red">*</span></form:label>
+	                    <form:label path="mname">이름  <span class="color-red">*</span> <form:errors path="mname" cssClass="label label-important" /></form:label>
 						<form:input path="mname"  cssClass="span12" />		
                     </div>
                     <div class="span6">
@@ -55,14 +57,14 @@
                 </div>
                 <div class="controls">
                     <div class="span12">
-	               		<form:label path="memail">이메일 <form:errors path="memail" cssClass="error" /><span class="color-red">*</span></form:label>
+	               		<form:label path="memail">이메일  <span class="color-red">*</span> <form:errors path="memail" cssClass="label label-important" /></form:label>
 						<form:input path="memail"  cssClass="span6" />
 					</div>    
                 </div>
                 <div class="controls">
                     <div class="span6">
-	               		<form:label path="mpasswd">패스워드 (6자리 이상) <form:errors path="mpasswd" cssClass="error" /><span class="color-red">*</span></form:label>
-						<form:input path="mpasswd"  cssClass="span12" />
+	               		<form:label path="mpasswd">패스워드 (6자리 이상) <span class="color-red">*</span> <form:errors path="mpasswd" cssClass="label label-important" /></form:label>
+						<form:password path="mpasswd"  cssClass="span12" />
                     </div>
                     <div class="span6">
                     	<label>패스워드 확인 </label>
@@ -70,7 +72,11 @@
                     </div>
                 </div>
                 
-                <hr />
+                <div class="controls">
+                    <div class="span12">
+                		<hr />
+                	</div>
+				</div>
                 
                 <div class="controls">
                     <div class="span6">
@@ -118,13 +124,17 @@
 				        <input type="checkbox" checked name="checkusermsg">유저로부터의 경기초청수신<br>
 				        <input type="checkbox" checked name="checkaddmsg">weplayfootball 소식수신
                     	</label>
-	                    <button class="btn-u pull-right" type="submit">등록하기 </button>
+	                    <button class="btn-u pull-right" type="submit"><strong>등록하기</strong> </button>
                     </div> 
                 </div>
-                <hr />
                 <div class="controls">
                     <div class="span12">
-						이미 가입하셨다면, <a href="<c:url value="/signin"/>"><strong>로그인 화면</strong></a>으로 이동하세요.
+                		<hr />
+                	</div>
+				</div>
+                <div class="controls">
+                    <div class="span12">
+                    	이미 가입하셨다면, <a href="<c:url value="/signin"/>" class="color-green"><strong>로그인 화면</strong></a>으로 이동하세요.
 					</div>
 				</div>
             </form:form>

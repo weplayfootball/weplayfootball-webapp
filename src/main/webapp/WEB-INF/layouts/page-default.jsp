@@ -47,7 +47,25 @@
 	<script src="src="<c:url value="/resources/assets/js/respond.js"/>"></script>
 <![endif]-->
 
-<tiles:insertAttribute name="javscrtipt" ignore="true" />
+<script>
+
+	$(document).ready(function(){
+
+		var url = window.location;
+		// Will only work if string in href matches with location
+		$('ul.nav a[href="'+ url +'"]').parent().addClass('active');
+
+		// Will also work for relative and absolute hrefs
+		$('ul.nav a').filter(function() {
+			console.log(this.href);
+		    return this.href == url;
+		}).parent().addClass('active');
+		
+	
+	});
+</script>
+
+<tiles:insertAttribute name="javascript" ignore="true" />
 	
 </body>
 </html>	

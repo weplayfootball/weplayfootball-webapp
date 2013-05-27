@@ -1,24 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
 <!--=== Top ===-->    
 <div id="top">
     <div class="container">         
         <ul id="loginbar" class="pull-right">
-        	<c:if test="${not empty member}">
-        		<li>Welcome, <c:out value="${member.mname}"/>!</li>
+        	<c:if test="${sessionScope.MEMBER != null}" >
+        		<li>Welcome, <c:out value="${sessionScope.MEMBER.mname}"/>!</li>
 				<li class="devider">&nbsp;</li>
 			</c:if>
-        	<li>
+        	
         	<c:choose>
-			    <c:when test="${not empty member}">
-			        <a href="<c:url value="/signout"/>" class="login-btn">Logout</a>
+			    <c:when test="${sessionScope.MEMBER != null}">
+			        <li><a href="<c:url value="/signout"/>" class="login-btn">Logout</a></li>
 			    </c:when>
 			    <c:otherwise>
-			        <a href="<c:url value="/signin"/>" class="login-btn">Login</a>
+			        <li><a href="<c:url value="/signin"/>" class="login-btn">Login</a></li>
+			        <li class="devider">&nbsp;</li>
+			        <li><a href="<c:url value="/signup"/>" class="login-btn">Register</a></li>
 			    </c:otherwise>
 			</c:choose>
-        	</li>
+        	
         	<li class="devider">&nbsp;</li>
             <li><a href="<c:url value="/public/help"/>" class="login-btn">Help</a></li>   
         </ul>
@@ -29,8 +30,8 @@
 <div id="header">               
     <div class="container"> 
         <!-- Logo -->    
-        <div id="logo">       
-        <h4><a href="<c:url value="/"/>">WePlayFootball</a></h4>
+        <div id="logo">   
+        	<a href="<c:url value="/home"/>"><img src="<c:url value="/resources/assets/img/logo.png"/>" alt="weplayfootball"></a>    
         </div>        
                                     
         <!-- Menu -->       
@@ -43,10 +44,15 @@
                 </a><!-- /nav-collapse -->                                  
                 <div class="nav-collapse collapse">                                     
                 <ul class="nav top-2">
-                    <li class="active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">2013 Seoul League</a>
-                    </li>
-                    <li><a href="<c:url value="/public/contact"/>">Contact</a></li>                               
+                    <li><a href="<c:url value="/home"/>" >2013 Summer League</a></li>
+                    <c:choose>
+			    		<c:when test="${sessionScope.MEMBER != null}">
+                    	</c:when>   
+			    		<c:otherwise>
+                    		<li><a href="<c:url value="/signin"/>">Login</a></li>
+			    		</c:otherwise>
+			    	</c:choose>  
+                    <li><a href="<c:url value="/public/contact"/>">Contact</a></li>     
                 </ul>
                 </div><!-- /nav-collapse -->                                
             </div><!-- /navbar-inner -->

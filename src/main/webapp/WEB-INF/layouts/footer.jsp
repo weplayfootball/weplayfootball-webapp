@@ -6,15 +6,20 @@
 	<div class="container">
 
 		<div class="row-fluid">
-			<div class="span4">
+			<div class="span6">
                 <!-- About -->
 		        <div class="headline"><h3>About</h3></div>	
-				<p class="margin-bottom-25">weplatfootball.fm 은 생활체육 축구를 향한 모두의 바램을 담고 싶습니다.</p>
+				<p class="margin-bottom-25">
+					it's the real football game. Play wherever you want!<br>
+					<small>여러분들과 함께 생활체육 축구를 향한 모두의 바램을 담고 싶습니다.<br>
+					사업자 등록번호 안내: [138-81-78006] <br>
+					통신판매업 신고 2012-경기안양-00638호</small>
+				</p>
 			</div><!--/span4-->	
 			
-			<div class="span4">
+			<div class="span2">
 			    <!-- Stay Connected -->
-		        <div class="headline"><h3>Stay Connected</h3></div>	
+		        <div class="headline"><h3>Links</h3></div>	
                 <ul class="social-icons">
                     <li><a href="http://www.facebook.com/yachukdong" data-original-title="Facebook" class="facebook" target="_blank"></a></li>
                     <li><a href="https://twitter.com/ikhanhur" data-original-title="Twitter" class="twitter" target="_blank"></a></li>

@@ -5,6 +5,7 @@
 
 	<definition name="home" extends="page-wFooter">
 		<put-attribute name="content" value="/WEB-INF/views/home/home.jsp" />
+		<put-attribute name="javascript" value="/WEB-INF/views/home/home-js.jsp" />
 	</definition>
 
 </tiles-definitions>
