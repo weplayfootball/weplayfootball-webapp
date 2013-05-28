@@ -84,8 +84,9 @@
 </div><!--/body-->
 
 <!-- TWITTER SIGNIN -->
-<form name="tw_signin" id="tw_signin" action="<c:url value="/signin/twitter"/>" method="POST"></form>
+<form name="tw_signin" id="tw_signin" action="<c:url value="/signin/twitter"/>" method="POST">
+</form>
 <!-- FACEBOOK SIGNIN -->
 <form name="fb_signin" id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
-<input type="hidden" name="scope" value="publish_stream,user_photos,offline_access" />
+<input type="hidden" name="scope" value="email,publish_stream,user_photos,offline_access" />
 </form>

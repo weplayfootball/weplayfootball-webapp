@@ -21,9 +21,16 @@
 			<c:if test="${not empty message}">
 			<div class="alert alert-error">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>${message.type.cssClass}</strong>${message.text}
+                <strong>${message.type.cssClass}</strong>&nbsp;&nbsp;${message.text}
             </div>
 			</c:if>
+			
+			<c:choose>
+				<c:when test="${not empty signupForm.memail}">
+				</c:when>
+				<c:otherwise>
+				</c:otherwise>
+			</c:choose>
 
 			<c:url value="/signup" var="signupUrl" />
 			<form:form id="signup" action="${signupUrl}" method="post" modelAttribute="signupForm" enctype="multipart/form-data" class="reg-page">

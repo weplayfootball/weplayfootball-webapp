@@ -5,7 +5,7 @@
 
 	<definition name="signup" extends="page">
 		<put-attribute name="content" value="/WEB-INF/views/signup/signup.jsp" />
-		<put-attribute name="javascript" value="/WEB-INF/views/signin/signup-js.jsp" />
+		<put-attribute name="javascript" value="/WEB-INF/views/signup/signup-js.jsp" />
 	</definition>
 
 </tiles-definitions>

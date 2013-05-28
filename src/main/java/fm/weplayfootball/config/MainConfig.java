@@ -1,9 +1,5 @@
 package fm.weplayfootball.config;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -18,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -32,13 +30,13 @@ public class MainConfig {
 
 	@Bean
 	public DataSource dataSource() {
-		
+
 		BasicDataSource ds = new org.apache.commons.dbcp.BasicDataSource();
-		ds.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+		ds.setDriverClassName(env.getProperty("jdbc.driver"));
 		ds.setUrl(env.getProperty("jdbc.url"));
 		ds.setUsername(env.getProperty("jdbc.username"));
 		ds.setPassword(env.getProperty("jdbc.password"));
-/*
+		/*
 		Connection con = null;
 		try {
 			con = ds.getConnection();
@@ -59,7 +57,7 @@ public class MainConfig {
 			}
 		}
 
-*/
+		 */
 		return ds;
 	}
 
@@ -71,8 +69,17 @@ public class MainConfig {
 		return sessionFactory.getObject();
 	}
 
-	 @Bean
-	  public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-	    return new PropertySourcesPlaceholderConfigurer();
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
+
+	@Bean
+	  public JavaMailSender mailSender() {
+	    final JavaMailSenderImpl sender = new JavaMailSenderImpl();
+	    sender.setHost(env.getProperty("mail.host"));
+	    sender.setUsername(env.getProperty("mail.username"));
+	    sender.setPassword(env.getProperty("mail.password"));
+	    return sender;
 	  }
 }

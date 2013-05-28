@@ -102,6 +102,11 @@ public class SignupForm {
 	
 	public static SignupForm fromProviderUser(UserProfile providerUser) {
 
+
+		System.out.println("***********"+providerUser);
+		System.out.println("***********"+providerUser.getEmail());
+		System.out.println("***********"+providerUser.getUsername());
+		
 		// @ TODO Form 에 추가 정의 필요!!!!
 		SignupForm form = new SignupForm();
 		form.setMemail(providerUser.getEmail());

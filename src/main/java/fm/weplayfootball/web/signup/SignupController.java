@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 import javax.validation.Valid;
 
@@ -12,6 +13,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.stereotype.Controller;
@@ -38,9 +41,12 @@ public class SignupController {
 
 	@Autowired
 	private MemberMapper memberMapper;	
-	
+
 	@Autowired
 	private GroundsMapper groundsMapper;	
+
+	@Autowired
+	private JavaMailSender mailSender;
 
 	@Autowired
 	Environment env;
@@ -65,12 +71,51 @@ public class SignupController {
 		Connection<?> connection = ProviderSignInUtils.getConnection(request);
 
 		if (connection != null) {
-			request.setAttribute("message", new Message(MessageType.INFO, "Your " + StringUtils.capitalize(connection.getKey().getProviderId()) + " account is not associated with a WePlayFootball.fm account. If you're new, please sign up."), WebRequest.SCOPE_REQUEST);
+			request.setAttribute("message", new Message(MessageType.INFO, connection.fetchUserProfile().getUsername()+" 님 " + StringUtils.capitalize(connection.getKey().getProviderId()) + " 계정이 WePlayFootball.fm 에 아직 신규 가입되지 않았습니다."), WebRequest.SCOPE_REQUEST);
 			return SignupForm.fromProviderUser(connection.fetchUserProfile());
 		} else {
+
+			if(request.getParameter("auth")!= null){
+				// @ TODO check authCD is valid ?
+				if(true){
+					SignupForm form = new SignupForm();
+					form.setMname("AA");
+					form.setMemail("aa@gmail.com");
+					return form;
+				}else{
+					request.setAttribute("message", new Message(MessageType.ERROR, "신규가입 인증번호가 만료되었거나 유효하지 않습니다. 다시 회원 가입 하십시오."), WebRequest.SCOPE_REQUEST);
+					return new SignupForm();
+				}
+			}
+
 			return new SignupForm();
 		}
 
+	}
+
+	@RequestMapping(value="/mailAuthCd", method=RequestMethod.POST)
+	@ResponseBody
+	public String mailAuthCd(
+			@RequestParam("name") String name,
+			@RequestParam("email") String email ) {
+
+
+		String authCd = generateAuthPassword();
+		// @ TODO DB 에 저장 
+
+
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setFrom("hur.ikhan@ninetofiveinc.com");
+		mailMessage.setTo(email);
+		mailMessage.setSubject(name+" 님, WePlayFootBall 에서 인증메일을 보냅니다");
+		mailMessage.setText(
+				name + " 님, 회원님의 회원가입 인증번호는 "+authCd + "입니다. <br><br><br>" +
+						"아래 링크를 클릭하시면 회원가입 페이지로 바로 이동합니다.<br>"+
+						"<a href=\"http://weplayfootball/signup?auth="+authCd+"\">http://weplayfootball/signup?auth="+authCd+"</a>");
+
+		mailSender.send(mailMessage);
+
+		return "OK";
 	}
 
 	@RequestMapping(value="/signup", method=RequestMethod.POST)
@@ -82,7 +127,7 @@ public class SignupController {
 		if (formBinding.hasErrors()) {
 			return null;
 		}
-		
+
 		// 파일 업로드 !!!!
 		if(atchFile != null && !atchFile.isEmpty()){
 			FileOutputStream out = null;
@@ -146,6 +191,24 @@ public class SignupController {
 			formBinding.rejectValue("username", "user.duplicateUsername", "already in use");
 			return null;
 		}
+	}
+
+	private String generateAuthPassword(){
+		Random rand = new Random(System.currentTimeMillis());  
+		int randomindex =0;
+		int r = 0;
+		String rr = "";
+		String fullpass = "";
+
+		for(randomindex=0;randomindex<12;randomindex++){
+			r = 0; 
+			rr = ""; 
+			r = rand.nextInt(9)+1; //1이상, 9이하
+			rr = Integer.toString(r);
+			fullpass += rr;
+		}
+
+		return fullpass;
 	}
 
 }
