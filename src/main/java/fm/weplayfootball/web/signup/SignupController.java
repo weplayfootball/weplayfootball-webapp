@@ -4,15 +4,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.social.connect.Connection;
@@ -20,13 +25,18 @@ import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 
 import fm.weplayfootball.persistence.domain.Member;
 import fm.weplayfootball.persistence.mapper.GroundsMapper;
@@ -121,22 +131,20 @@ public class SignupController {
 	@RequestMapping(value="/signup", method=RequestMethod.POST)
 	public String signup(
 			@Valid SignupForm form, 
-			BindingResult formBinding, WebRequest request, 
-			@RequestParam("profileFile") MultipartFile atchFile) {
+			BindingResult formBinding, WebRequest request) {
 
 		if (formBinding.hasErrors()) {
 			return null;
 		}
+		
+		MultipartFile atchFile = form.getAtchFile();
 
 		// 파일 업로드 !!!!
 		if(atchFile != null && !atchFile.isEmpty()){
 			FileOutputStream out = null;
 			try {
 				byte[] fileByte = atchFile.getBytes();
-				if (logger.isDebugEnabled()) {
-					logger.debug("file.getOriginalFilename===" + atchFile.getOriginalFilename() + "(file.length===" + fileByte.length + ")");
-				}
-
+				
 				String fileName = atchFile.getOriginalFilename();
 				String fileExt = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
 				String path = env.getProperty("fileupload.profile");
@@ -179,12 +187,61 @@ public class SignupController {
 		}
 		return null;
 
+		
 	}
+	
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ModelAndView resolveException(HttpServletRequest request,
+			HttpServletResponse response, Object handler, Exception exception) {
+		
+        logger.error(exception);
+        Map<String, Object> model = new HashMap<String, Object>();
+        if (exception instanceof MaxUploadSizeExceededException)
+        {
+        	
+        	Long maxSizeInBytes = ((MaxUploadSizeExceededException) exception).getMaxUploadSize();
+            System.out.println("ADSFASDFASDFASDF : "+maxSizeInBytes);
+        	
+        	//request.setAttribute("message", "파일 업로드는 1MB 이상 불가능합니다."); //exception.getMessage());
+        	//model.put("message", "abc");
+        	//request.setAttribute("message", new Message(MessageType.ERROR, "파일 업로드는 1MB 이상 불가능합니다."));
+        	model.put("message", new Message(MessageType.ERROR, "파일 업로드는 1MB 이상 불가능합니다."));
+        } else
+        {
+        	//request.setAttribute("message", "Unexpected error: " + exception.getMessage());
+        	//model.put("message", "abc");
+        }
 
-
+        System.out.println("-----------");
+        while(request.getParameterNames().hasMoreElements()){
+        	  String names = (String)request.getParameterNames().nextElement();
+        	  System.out.println(names + " : " + request.getParameter(names) + "<br>");
+        	 }
+        
+        
+        
+        System.out.println(request.getAttribute("memail"));
+        System.out.println(request.getAttribute("mname"));
+        System.out.println(request.getAttribute("signForm"));
+        System.out.println(request.getParameterMap());
+        System.out.println(request.getParameterNames());
+        
+        System.out.println("MM : "+request.getParameter("memail"));
+        System.out.println("MM : "+request.getParameter("mname"));
+        System.out.println("---- " + handler);
+        
+        SignupForm form = new SignupForm();
+        form.setMemail("yohany@gmail.com");
+        form.setMname("asdfdfsadasf김요");
+        model.put("signupForm", form);
+        return new ModelAndView("signup", model);
+    }
+	
+	
 	private Member createMember(SignupForm form, BindingResult formBinding) {
 		try {
 			Member member = form.toMember();
+			System.out.println(member);
 			memberMapper.insert(member);
 			return member;
 		} catch (DuplicateKeyException e) {
@@ -210,5 +267,7 @@ public class SignupController {
 
 		return fullpass;
 	}
+
+	
 
 }

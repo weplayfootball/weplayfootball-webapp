@@ -16,19 +16,19 @@
   </select>
 
   <insert id="insert" parameterType="Member">
-    INSERT INTO FM_MEMBER
+    INSERT INTO MEMBER
       (	msno 	, mname 	, memail, 
       	mpasswd , muid 		, mtel 	,
-      	mlevel	, mimage	, mimagesize ,
+      	mlevel	, mimage	, mimagesize , 
       	mip 	, mposition	, mlocal, 
-      	mintro	, mpasswd
+      	mintro
       )
     values
       (	msno_seq.nextval			, #{mname} 						, #{memail},
       	#{mpasswd,jdbcType=VARCHAR} , #{muid,jdbcType=VARCHAR} 		, #{mtel,jdbcType=VARCHAR},
-      	#{mlevel,jdbcType=CHAR}		, #{mimage,jdbcType=VARCHAR}	, #{mimagesize,jdbcType=NUMBER} ,
+      	#{mlevel,jdbcType=CHAR}		, #{mimage,jdbcType=VARCHAR}	, #{mimagesize,jdbcType=NUMERIC} ,
       	#{mip,jdbcType=VARCHAR} 	, #{mposition,jdbcType=VARCHAR}	, #{mlocal,jdbcType=VARCHAR}, 
-      	#{mintro,jdbcType=VARCHAR}	, #{mpasswd}
+      	#{mintro,jdbcType=VARCHAR}
       )
   </insert>
 

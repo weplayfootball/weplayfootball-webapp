@@ -63,9 +63,15 @@ public class MainConfig {
 
 	@Bean
 	public SqlSessionFactory sqlSessionFactory() throws Exception {
+		// @ TODO 운영 환경에서는 바꿔줘여 합니다.
 		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+		//SqlSessionFactoryBean sessionFactory = new RefreshableSqlSessionFactoryBean();
 		sessionFactory.setDataSource(dataSource());
 		sessionFactory.setTypeAliasesPackage("fm.weplayfootball.persistence.domain");
+		//sessionFactory.setMapperLocations(
+		//		new Resource[] { 
+		//				new ClassPathResource("fm.weplayfootball.persistence.mapper.*.xml")        
+		//		}); 
 		return sessionFactory.getObject();
 	}
 
@@ -75,11 +81,11 @@ public class MainConfig {
 	}
 
 	@Bean
-	  public JavaMailSender mailSender() {
-	    final JavaMailSenderImpl sender = new JavaMailSenderImpl();
-	    sender.setHost(env.getProperty("mail.host"));
-	    sender.setUsername(env.getProperty("mail.username"));
-	    sender.setPassword(env.getProperty("mail.password"));
-	    return sender;
-	  }
+	public JavaMailSender mailSender() {
+		final JavaMailSenderImpl sender = new JavaMailSenderImpl();
+		sender.setHost(env.getProperty("mail.host"));
+		sender.setUsername(env.getProperty("mail.username"));
+		sender.setPassword(env.getProperty("mail.password"));
+		return sender;
+	}
 }

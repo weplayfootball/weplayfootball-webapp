@@ -65,17 +65,17 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		messageSource.setBasename("/WEB-INF/messages/messages");
 		return messageSource;
 	}
-	
+
 	public void configureMessageConverters(final List<HttpMessageConverter<?>> messageConverters) {
 
-        final ClassLoader classLoader = getClass().getClassLoader();
-        if (ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader)) {
-            messageConverters.add(new MappingJackson2HttpMessageConverter());
-        } else if (ClassUtils.isPresent("org.codehaus.jackson.map.ObjectMapper", classLoader)) {
-            messageConverters.add(new MappingJacksonHttpMessageConverter());
-        }
+		final ClassLoader classLoader = getClass().getClassLoader();
+		if (ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader)) {
+			messageConverters.add(new MappingJackson2HttpMessageConverter());
+		} else if (ClassUtils.isPresent("org.codehaus.jackson.map.ObjectMapper", classLoader)) {
+			messageConverters.add(new MappingJacksonHttpMessageConverter());
+		}
 
-        super.configureMessageConverters(messageConverters);
-    }
-	
+		super.configureMessageConverters(messageConverters);
+	}
+
 }

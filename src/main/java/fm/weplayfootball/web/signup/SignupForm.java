@@ -4,6 +4,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.social.connect.UserProfile;
+import org.springframework.web.multipart.MultipartFile;
 
 import fm.weplayfootball.persistence.domain.Member;
 
@@ -28,9 +29,17 @@ public class SignupForm {
 
 	private String mimage;
 	private int mimagesize;
+	
+	private MultipartFile atchFile;
 
 
 
+	public MultipartFile getAtchFile() {
+		return atchFile;
+	}
+	public void setAtchFile(MultipartFile atchFile) {
+		this.atchFile = atchFile;
+	}
 	public String getMemail() {
 		return memail;
 	}
@@ -89,6 +98,7 @@ public class SignupForm {
 	public Member toMember(){
 		Member member = new Member();
 		member.setMemail(memail);
+		member.setMpasswd(mpasswd);
 		member.setMtel(mtel);
 		member.setMname(mname);
 		member.setMposition(mposition);

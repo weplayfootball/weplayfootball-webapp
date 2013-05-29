@@ -120,7 +120,7 @@
                 <div class="controls">
                     <div class="span12">
 						<form:label path="mintro">자기 소개</form:label>
-						<textarea class="span12 border-radius-none" rows="3" name='mintro' id='mintro' ></textarea>
+						<textarea class="span12 border-radius-none" rows="3" name='mintro' id='mintro' >매너있고 실력있는 멋진 축구인입니다~ 함께 뛰실 분들 언제든지 환영합니다!! 연락주세요 *^^*</textarea>
 					</div> 
                 </div>
                 <div class="controls form-inline">
