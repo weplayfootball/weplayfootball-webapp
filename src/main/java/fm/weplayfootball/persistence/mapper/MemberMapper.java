@@ -2,7 +2,6 @@ package fm.weplayfootball.persistence.mapper;
 
 import fm.weplayfootball.persistence.domain.Member;
 
-
 public interface MemberMapper {
 
 	Member read(String memail);
@@ -10,3 +9,5 @@ public interface MemberMapper {
 	void insert(Member member);
 
 }
+
+

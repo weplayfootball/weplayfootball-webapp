@@ -9,15 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.social.connect.Connection;
@@ -31,15 +28,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import fm.weplayfootball.persistence.domain.Member;
+import fm.weplayfootball.persistence.domain.MemberAuthCd;
 import fm.weplayfootball.persistence.mapper.GroundsMapper;
+import fm.weplayfootball.persistence.mapper.MemberAuthCdMapper;
 import fm.weplayfootball.persistence.mapper.MemberMapper;
 import fm.weplayfootball.web.message.Message;
 import fm.weplayfootball.web.message.MessageType;
@@ -49,17 +46,13 @@ import fm.weplayfootball.web.signin.SignInUtils;
 public class SignupController {
 
 
-	@Autowired
-	private MemberMapper memberMapper;	
+	@Autowired private MemberMapper 		memberMapper;	
+	@Autowired private MemberAuthCdMapper 	memberAuthCdMapper;	
+	@Autowired private GroundsMapper 		groundsMapper;	
 
-	@Autowired
-	private GroundsMapper groundsMapper;	
+	@Autowired private JavaMailSender mailSender;
 
-	@Autowired
-	private JavaMailSender mailSender;
-
-	@Autowired
-	Environment env;
+	@Autowired Environment env;
 
 	static final Logger logger = Logger.getLogger(SignupController.class); 
 
@@ -85,27 +78,35 @@ public class SignupController {
 			return SignupForm.fromProviderUser(connection.fetchUserProfile());
 		} else {
 
-			if(request.getParameter("auth")!= null){
-				// @ TODO check authCD is valid ?
-				if(true){
+			String email = request.getParameter("email");
+			String authCd = request.getParameter("auth");
+			if(StringUtils.hasText(authCd)){
+
+				MemberAuthCd memberAuthCd = memberAuthCdMapper.read(email, authCd);
+
+				if(memberAuthCd != null && StringUtils.hasText(memberAuthCd.getMemail())){
 					SignupForm form = new SignupForm();
-					form.setMname("AA");
-					form.setMemail("aa@gmail.com");
+					form.setMname(	memberAuthCd.getMname()	);
+					form.setMemail(	memberAuthCd.getMemail());
 					return form;
 				}else{
 					request.setAttribute("message", new Message(MessageType.ERROR, "신규가입 인증번호가 만료되었거나 유효하지 않습니다. 다시 회원 가입 하십시오."), WebRequest.SCOPE_REQUEST);
+
+					// 회원가입 1단계 페이지 !!!
 					return new SignupForm();
 				}
-			}
+			}else{
 
-			return new SignupForm();
+				// 회원가입 1단계 페이지 !!!
+				return new SignupForm();
+			}
 		}
 
 	}
 
 	@RequestMapping(value="/mailAuthCd", method=RequestMethod.POST)
 	@ResponseBody
-	public String mailAuthCd(
+	public ResultAuthCd mailAuthCd(
 			@RequestParam("name") String name,
 			@RequestParam("email") String email ) {
 
@@ -125,7 +126,25 @@ public class SignupController {
 
 		mailSender.send(mailMessage);
 
-		return "OK";
+
+		MemberAuthCd memberAuthcd = new MemberAuthCd();
+		memberAuthcd.setMname(name);
+		memberAuthcd.setMemail(email);
+		memberAuthcd.setMauthcd(authCd);
+
+		try {
+			memberAuthCdMapper.insert(memberAuthcd);
+
+			return new ResultAuthCd("ok", "");
+		} catch (DuplicateKeyException e) {
+
+			return new ResultAuthCd("ok", "duplicate");
+
+		} catch (Exception e){
+			e.printStackTrace();
+			return new ResultAuthCd("error", e.getMessage());
+		}
+
 	}
 
 	@RequestMapping(value="/signup", method=RequestMethod.POST)
@@ -136,7 +155,7 @@ public class SignupController {
 		if (formBinding.hasErrors()) {
 			return null;
 		}
-		
+
 		MultipartFile atchFile = form.getAtchFile();
 
 		// 파일 업로드 !!!!
@@ -144,7 +163,7 @@ public class SignupController {
 			FileOutputStream out = null;
 			try {
 				byte[] fileByte = atchFile.getBytes();
-				
+
 				String fileName = atchFile.getOriginalFilename();
 				String fileExt = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
 				String path = env.getProperty("fileupload.profile");
@@ -187,57 +206,57 @@ public class SignupController {
 		}
 		return null;
 
-		
-	}
-	
-	@ExceptionHandler(MaxUploadSizeExceededException.class)
-	public ModelAndView resolveException(HttpServletRequest request,
-			HttpServletResponse response, Object handler, Exception exception) {
-		
-        logger.error(exception);
-        Map<String, Object> model = new HashMap<String, Object>();
-        if (exception instanceof MaxUploadSizeExceededException)
-        {
-        	
-        	Long maxSizeInBytes = ((MaxUploadSizeExceededException) exception).getMaxUploadSize();
-            System.out.println("ADSFASDFASDFASDF : "+maxSizeInBytes);
-        	
-        	//request.setAttribute("message", "파일 업로드는 1MB 이상 불가능합니다."); //exception.getMessage());
-        	//model.put("message", "abc");
-        	//request.setAttribute("message", new Message(MessageType.ERROR, "파일 업로드는 1MB 이상 불가능합니다."));
-        	model.put("message", new Message(MessageType.ERROR, "파일 업로드는 1MB 이상 불가능합니다."));
-        } else
-        {
-        	//request.setAttribute("message", "Unexpected error: " + exception.getMessage());
-        	//model.put("message", "abc");
-        }
 
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ModelAndView resolveException(Exception exception) {
+
+		logger.error(exception);
+		Map<String, Object> model = new HashMap<String, Object>();
+		if (exception instanceof MaxUploadSizeExceededException)
+		{
+
+			Long maxSizeInBytes = ((MaxUploadSizeExceededException) exception).getMaxUploadSize();
+			System.out.println("ADSFASDFASDFASDF : "+maxSizeInBytes);
+
+			//request.setAttribute("message", "파일 업로드는 1MB 이상 불가능합니다."); //exception.getMessage());
+			//model.put("message", "abc");
+			//request.setAttribute("message", new Message(MessageType.ERROR, "파일 업로드는 1MB 이상 불가능합니다."));
+			model.put("message", new Message(MessageType.ERROR, "파일 업로드는 1MB 이상 불가능합니다."));
+		} else
+		{
+			//request.setAttribute("message", "Unexpected error: " + exception.getMessage());
+			//model.put("message", "abc");
+		}
+		/*
         System.out.println("-----------");
         while(request.getParameterNames().hasMoreElements()){
         	  String names = (String)request.getParameterNames().nextElement();
         	  System.out.println(names + " : " + request.getParameter(names) + "<br>");
         	 }
-        
-        
-        
+
+
+
         System.out.println(request.getAttribute("memail"));
         System.out.println(request.getAttribute("mname"));
         System.out.println(request.getAttribute("signForm"));
         System.out.println(request.getParameterMap());
         System.out.println(request.getParameterNames());
-        
+
         System.out.println("MM : "+request.getParameter("memail"));
         System.out.println("MM : "+request.getParameter("mname"));
         System.out.println("---- " + handler);
-        
+
         SignupForm form = new SignupForm();
         form.setMemail("yohany@gmail.com");
         form.setMname("asdfdfsadasf김요");
         model.put("signupForm", form);
-        return new ModelAndView("signup", model);
-    }
-	
-	
+		 */
+		return new ModelAndView("signup", model);
+	}
+
+
 	private Member createMember(SignupForm form, BindingResult formBinding) {
 		try {
 			Member member = form.toMember();
@@ -268,6 +287,32 @@ public class SignupController {
 		return fullpass;
 	}
 
-	
+
+
+	class ResultAuthCd {
+
+		private String status;
+		private String message;
+
+		public ResultAuthCd(String status, String message){
+			this.status = status;
+			this.message = message;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+		public void setStatus(String status) {
+			this.status = status;
+		}
+		public String getMessage() {
+			return message;
+		}
+		public void setMessage(String message) {
+			this.message = message;
+		}
+	}
+
+
 
 }

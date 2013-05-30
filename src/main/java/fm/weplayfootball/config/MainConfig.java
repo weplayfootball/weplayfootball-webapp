@@ -19,7 +19,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan(basePackages = "fm.weplayfootball.web", excludeFilters = { @Filter(Configuration.class) })
 @PropertySource("classpath:fm/weplayfootball/config/application.properties")
 @MapperScan("fm.weplayfootball.persistence.mapper")
 @EnableTransactionManagement
