@@ -3,7 +3,7 @@
 
 <tiles-definitions>
 
-	<definition name="signup" extends="page">
+	<definition name="signup" extends="page-wFooter">
 		<put-attribute name="content" value="/WEB-INF/views/signup/signup.jsp" />
 		<put-attribute name="javascript" value="/WEB-INF/views/signup/signup-js.jsp" />
 	</definition>

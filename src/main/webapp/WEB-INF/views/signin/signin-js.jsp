@@ -13,7 +13,7 @@
 		$('#btnSigninTW').click(function (e) {
 			$("#tw_signin").submit();
 			e.preventDefault();
-		}); 
+		});
 	
 	});
 </script>

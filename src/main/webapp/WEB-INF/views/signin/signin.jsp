@@ -66,8 +66,8 @@
                     <input id="memail" name="j_username" type="text" class="input-xlarge"  placeholder="Email Address" <c:if test="${not empty signinErrorMessage}">value="${SPRING_SECURITY_LAST_USERNAME}"</c:if> />
                 </div>
                 <div class="input-prepend">
-                    <span class="add-on"><i class="icon-lock"></i></span>
-                    <input id="mpasswd" name="j_password" type="password" class="input-xlarge" />
+                    <span class="add-on"><i class="icon-key"></i></span>
+                    <input id="mpasswd" name="j_password" type="password" class="input-xlarge" placeholder="Password"/>
                 </div>
                 <div class="controls form-inline">
                     <button class="btn-u pull-right" type="submit">Login</button>

@@ -74,8 +74,9 @@ public class SignupController {
 		Connection<?> connection = ProviderSignInUtils.getConnection(request);
 
 		if (connection != null) {
-			request.setAttribute("message", new Message(MessageType.INFO, connection.fetchUserProfile().getUsername()+" 님 " + StringUtils.capitalize(connection.getKey().getProviderId()) + " 계정이 WePlayFootball.fm 에 아직 신규 가입되지 않았습니다."), WebRequest.SCOPE_REQUEST);
+			request.setAttribute("message", new Message(MessageType.INFO, connection.fetchUserProfile().getUsername()+" 님 " + StringUtils.capitalize(connection.getKey().getProviderId()) + " 과 연결되었으나, 아직 WePlayFootball.fm 에 가입되지 않았습니다. <br/ > 계속 신규 가입하시거나, <a href='/signout'><strong>여기</strong></a> 를 클릭하여 다른 방법으로 로그인/신규가입 하세요."), WebRequest.SCOPE_REQUEST);
 			return SignupForm.fromProviderUser(connection.fetchUserProfile());
+
 		} else {
 
 			String email = request.getParameter("email");
@@ -104,7 +105,7 @@ public class SignupController {
 
 	}
 
-	@RequestMapping(value="/mailAuthCd", method=RequestMethod.POST)
+	@RequestMapping(value="/signup/auth", method=RequestMethod.POST)
 	@ResponseBody
 	public ResultAuthCd mailAuthCd(
 			@RequestParam("name") String name,
