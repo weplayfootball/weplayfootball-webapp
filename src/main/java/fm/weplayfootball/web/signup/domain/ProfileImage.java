@@ -1,6 +1,6 @@
-package fm.weplayfootball.web.signup;
+package fm.weplayfootball.web.signup.domain;
 
-public class ProfileFile {
+public class ProfileImage {
 
 	public int length;
 	public byte[] bytes;

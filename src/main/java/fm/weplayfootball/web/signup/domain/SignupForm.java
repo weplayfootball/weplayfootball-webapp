@@ -1,4 +1,4 @@
-package fm.weplayfootball.web.signup;
+package fm.weplayfootball.web.signup.domain;
 
 import javax.validation.constraints.Size;
 

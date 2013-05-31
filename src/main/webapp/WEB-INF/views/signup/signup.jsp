@@ -89,7 +89,11 @@
 					            </c:otherwise>
 							</c:choose>                     
 						</s:bind>
-		            	<p>이메일 : ${signupForm.memail}</p>
+		            	<div class="controls">
+		                    <div class="span12">
+		                		<p><strong>이메일 : ${signupForm.memail}</strong></p>
+		                	</div>
+						</div>
 		                <div class="controls">    
 		                    <div class="span6">
 			                    <form:label path="mname">이름  <span class="color-red">*</span> <form:errors path="mname" cssClass="label label-important" /></form:label>
@@ -157,12 +161,12 @@
 		                </div>
 		                <div class="controls form-inline">
 		                    <div class="span12">
-		                    	<label class="checkbox">
+		                    	<!-- label class="checkbox">
 		                    	<input type="checkbox" checked name="checkemail">이메일공개<br>
 						        <input type="checkbox" checked name="checktel">전화번호공개<br>
 						        <input type="checkbox" checked name="checkusermsg">유저로부터의 경기초청수신<br>
 						        <input type="checkbox" checked name="checkaddmsg">weplayfootball 소식수신
-		                    	</label>
+		                    	</label -->
 			                    <button class="btn-u pull-right" type="submit"><strong>등록하기</strong> </button>
 		                    </div> 
 		                </div>

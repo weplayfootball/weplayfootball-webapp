@@ -1,12 +1,6 @@
 package fm.weplayfootball.web.signup;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import javax.validation.Valid;
@@ -22,16 +16,12 @@ import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import fm.weplayfootball.persistence.domain.Member;
 import fm.weplayfootball.persistence.domain.MemberAuthCd;
@@ -41,10 +31,11 @@ import fm.weplayfootball.persistence.mapper.MemberMapper;
 import fm.weplayfootball.web.message.Message;
 import fm.weplayfootball.web.message.MessageType;
 import fm.weplayfootball.web.signin.SignInUtils;
+import fm.weplayfootball.web.signup.domain.ResultAuthCd;
+import fm.weplayfootball.web.signup.domain.SignupForm;
 
 @Controller
 public class SignupController {
-
 
 	@Autowired private MemberMapper 		memberMapper;	
 	@Autowired private MemberAuthCdMapper 	memberAuthCdMapper;	
@@ -111,10 +102,20 @@ public class SignupController {
 			@RequestParam("name") String name,
 			@RequestParam("email") String email ) {
 
+		ResultAuthCd resultAuthCd = new ResultAuthCd("ok");
 
 		String authCd = generateAuthPassword();
-		// @ TODO DB 에 저장 
 
+		MemberAuthCd memberAuthcd = new MemberAuthCd();
+		memberAuthcd.setMname(name);
+		memberAuthcd.setMemail(email);
+		memberAuthcd.setMauthcd(authCd);
+
+		try {
+			memberAuthCdMapper.insert(memberAuthcd);
+		} catch (DuplicateKeyException e) {
+			resultAuthCd.setMessage("duplicate");
+		}
 
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setFrom("hur.ikhan@ninetofiveinc.com");
@@ -127,25 +128,7 @@ public class SignupController {
 
 		mailSender.send(mailMessage);
 
-
-		MemberAuthCd memberAuthcd = new MemberAuthCd();
-		memberAuthcd.setMname(name);
-		memberAuthcd.setMemail(email);
-		memberAuthcd.setMauthcd(authCd);
-
-		try {
-			memberAuthCdMapper.insert(memberAuthcd);
-
-			return new ResultAuthCd("ok", "");
-		} catch (DuplicateKeyException e) {
-
-			return new ResultAuthCd("ok", "duplicate");
-
-		} catch (Exception e){
-			e.printStackTrace();
-			return new ResultAuthCd("error", e.getMessage());
-		}
-
+		return resultAuthCd;
 	}
 
 	@RequestMapping(value="/signup", method=RequestMethod.POST)
@@ -157,47 +140,7 @@ public class SignupController {
 			return null;
 		}
 
-		MultipartFile atchFile = form.getAtchFile();
-
-		// 파일 업로드 !!!!
-		if(atchFile != null && !atchFile.isEmpty()){
-			FileOutputStream out = null;
-			try {
-				byte[] fileByte = atchFile.getBytes();
-
-				String fileName = atchFile.getOriginalFilename();
-				String fileExt = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
-				String path = env.getProperty("fileupload.profile");
-				File destinationDir = new File(path);
-				if (!destinationDir.exists()){
-					destinationDir.mkdirs();
-				}
-
-				String currTime = Long.toString(System.currentTimeMillis());
-				String newFileName = currTime +"-"+form.getMemail()+ fileExt;
-				out = new FileOutputStream(destinationDir + File.separator + newFileName);
-				out.write(fileByte);
-
-				form.setMimage(newFileName);
-				form.setMimagesize(fileByte.length);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				if (out != null) {
-					try {
-						out.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-
-		}
+		ProfileImageUploader.upload( env.getProperty("fileupload.profile"), form );
 
 		Member member = createMember(form, formBinding);
 		if (member != null) {
@@ -205,58 +148,9 @@ public class SignupController {
 			ProviderSignInUtils.handlePostSignUp(member.getMemail(), request);
 			return "redirect:/";
 		}
+
 		return null;
-
-
 	}
-
-	@ExceptionHandler(MaxUploadSizeExceededException.class)
-	public ModelAndView resolveException(Exception exception) {
-
-		logger.error(exception);
-		Map<String, Object> model = new HashMap<String, Object>();
-		if (exception instanceof MaxUploadSizeExceededException)
-		{
-
-			Long maxSizeInBytes = ((MaxUploadSizeExceededException) exception).getMaxUploadSize();
-			System.out.println("ADSFASDFASDFASDF : "+maxSizeInBytes);
-
-			//request.setAttribute("message", "파일 업로드는 1MB 이상 불가능합니다."); //exception.getMessage());
-			//model.put("message", "abc");
-			//request.setAttribute("message", new Message(MessageType.ERROR, "파일 업로드는 1MB 이상 불가능합니다."));
-			model.put("message", new Message(MessageType.ERROR, "파일 업로드는 1MB 이상 불가능합니다."));
-		} else
-		{
-			//request.setAttribute("message", "Unexpected error: " + exception.getMessage());
-			//model.put("message", "abc");
-		}
-		/*
-        System.out.println("-----------");
-        while(request.getParameterNames().hasMoreElements()){
-        	  String names = (String)request.getParameterNames().nextElement();
-        	  System.out.println(names + " : " + request.getParameter(names) + "<br>");
-        	 }
-
-
-
-        System.out.println(request.getAttribute("memail"));
-        System.out.println(request.getAttribute("mname"));
-        System.out.println(request.getAttribute("signForm"));
-        System.out.println(request.getParameterMap());
-        System.out.println(request.getParameterNames());
-
-        System.out.println("MM : "+request.getParameter("memail"));
-        System.out.println("MM : "+request.getParameter("mname"));
-        System.out.println("---- " + handler);
-
-        SignupForm form = new SignupForm();
-        form.setMemail("yohany@gmail.com");
-        form.setMname("asdfdfsadasf김요");
-        model.put("signupForm", form);
-		 */
-		return new ModelAndView("signup", model);
-	}
-
 
 	private Member createMember(SignupForm form, BindingResult formBinding) {
 		try {
@@ -287,33 +181,5 @@ public class SignupController {
 
 		return fullpass;
 	}
-
-
-
-	class ResultAuthCd {
-
-		private String status;
-		private String message;
-
-		public ResultAuthCd(String status, String message){
-			this.status = status;
-			this.message = message;
-		}
-
-		public String getStatus() {
-			return status;
-		}
-		public void setStatus(String status) {
-			this.status = status;
-		}
-		public String getMessage() {
-			return message;
-		}
-		public void setMessage(String message) {
-			this.message = message;
-		}
-	}
-
-
 
 }

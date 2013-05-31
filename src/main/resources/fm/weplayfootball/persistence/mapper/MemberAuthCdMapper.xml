@@ -12,14 +12,14 @@
 
   <insert id="insert" parameterType="MemberAuthCd">
     INSERT INTO memberauthcd
-      (	 mname, memail, mauthcd, created, updated )
+      (	 mname, memail, mauthcd, created )
     values
       (	#{mname}, #{memail}, #{mauthcd}, SYSDATE )
   </insert>
 
   <insert id="update" parameterType="MemberAuthCd">
     UPDATE memberauthcd SET 
-      mname = #{mname}, mauthcd = #{mauthcd}, update = SYSDATE
+      mname = #{mname}, mauthcd = #{mauthcd}, updated = SYSDATE
 	WHERE memail = #{memail}
   </insert>
 
