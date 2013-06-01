@@ -1,19 +1,29 @@
 package fm.weplayfootball.web.signup;
 
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.VelocityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +52,7 @@ public class SignupController {
 	@Autowired private GroundsMapper 		groundsMapper;	
 
 	@Autowired private JavaMailSender mailSender;
+	@Autowired private VelocityEngine velocityEngine;
 
 	@Autowired Environment env;
 
@@ -114,19 +125,38 @@ public class SignupController {
 		try {
 			memberAuthCdMapper.insert(memberAuthcd);
 		} catch (DuplicateKeyException e) {
+			memberAuthCdMapper.update(memberAuthcd);
 			resultAuthCd.setMessage("duplicate");
 		}
 
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setFrom("hur.ikhan@ninetofiveinc.com");
-		mailMessage.setTo(email);
-		mailMessage.setSubject(name+" 님, WePlayFootBall 에서 인증메일을 보냅니다");
-		mailMessage.setText(
-				name + " 님, 회원님의 회원가입 인증번호는 "+authCd + "입니다. <br><br><br>" +
-						"아래 링크를 클릭하시면 회원가입 페이지로 바로 이동합니다.<br>"+
-						"<a href=\"http://weplayfootball/signup?auth="+authCd+"\">http://weplayfootball/signup?auth="+authCd+"</a>");
-
-		mailSender.send(mailMessage);
+		
+		try {
+			
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			helper.setFrom(		"hur.ikhan@ninetofiveinc.com");
+			helper.setTo(		email);
+			helper.setSubject(	name+" 님, WePlayFootBall 에서 인증메일을 보냅니다");
+			
+			memberAuthcd.setMemail(URLEncoder.encode(email, "UTF-8"));
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("auth", memberAuthcd);
+			
+			String textText = VelocityEngineUtils.mergeTemplateIntoString(
+			           velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationText.vm", "UTF-8", model);
+			
+			String textHtml = VelocityEngineUtils.mergeTemplateIntoString(
+			           velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationHtml.vm", "UTF-8", model);
+			
+			logger.debug(textHtml);
+			
+			helper.setText("김요한", true);
+			
+			mailSender.send(message);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResultAuthCd("error", e.getMessage());
+		}
 
 		return resultAuthCd;
 	}

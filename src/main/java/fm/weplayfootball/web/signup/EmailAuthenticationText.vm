@@ -1,0 +1,10 @@
+ 안녕하십니까. ${auth.mname} 님
+ wePLAYfootball.fm 을 이용해 주셔서 감사합니다. 
+ 아래 버튼을 클릭하여 이메일 주소 인증을 완료하시면, 회원 가입이 가능합니다.
+
+ 웹브라우져에 아래 링크를 붙여넣어 실행하세요.
+ http://localhost:8080/signup?email=${auth.memail}&auth=${auth.mauthcd}
+  
+  
+   Thanks,
+   The nineToFive Dev team
