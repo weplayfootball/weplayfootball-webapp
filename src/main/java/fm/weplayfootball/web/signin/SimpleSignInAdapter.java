@@ -26,6 +26,7 @@ public class SimpleSignInAdapter implements SignInAdapter {
 
 		System.out.println(localUserId);
 		System.out.println(connection.getDisplayName());
+		
 		SignInUtils.signin(localUserId);
 		return extractOriginalUrl(request);
 	}

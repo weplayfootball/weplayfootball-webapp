@@ -26,6 +26,11 @@ public class SigninAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 			Authentication authentication) throws IOException,
 			ServletException {
 
+		
+		System.out.println("****************************************************************");
+		System.out.println(authentication);
+		
+		
 		super.onAuthenticationSuccess(request, response, authentication);
 		
 		HttpSession session = request.getSession(true);

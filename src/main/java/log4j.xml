@@ -23,7 +23,10 @@
 	
 	<!-- Stringframework Loggers -->
 	<logger name="org.springframework.social">
-		<level value="debug" />
+		<level value="info" />
+	</logger>
+	<logger name="org.springframework.security">
+		<level value="info" />
 	</logger>
 	<logger name="org.springframework.core">
 		<level value="info" />
