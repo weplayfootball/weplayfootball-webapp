@@ -84,13 +84,14 @@ public class SignupController {
 			String email = request.getParameter("email");
 			String authCd = request.getParameter("auth");
 			if(StringUtils.hasText(authCd)){
-
+				
 				MemberAuthCd memberAuthCd = memberAuthCdMapper.read(email, authCd);
 
 				if(memberAuthCd != null && StringUtils.hasText(memberAuthCd.getMemail())){
 					SignupForm form = new SignupForm();
-					form.setMname(	memberAuthCd.getMname()	);
-					form.setMemail(	memberAuthCd.getMemail());
+					form.setMname(	memberAuthCd.getMname()		);
+					form.setMemail(	memberAuthCd.getMemail()	);
+					form.setAuthcd(	memberAuthCd.getMauthcd()	);
 					return form;
 				}else{
 					request.setAttribute("message", new Message(MessageType.ERROR, "신규가입 인증번호가 만료되었거나 유효하지 않습니다. 다시 회원 가입 하십시오."), WebRequest.SCOPE_REQUEST);
@@ -133,7 +134,7 @@ public class SignupController {
 		try {
 			
 			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message);
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 			helper.setFrom(		"hur.ikhan@ninetofiveinc.com");
 			helper.setTo(		email);
 			helper.setSubject(	name+" 님, WePlayFootBall 에서 인증메일을 보냅니다");
@@ -142,15 +143,15 @@ public class SignupController {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("auth", memberAuthcd);
 			
-			String textText = VelocityEngineUtils.mergeTemplateIntoString(
-			           velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationText.vm", "UTF-8", model);
+			//String textText = VelocityEngineUtils.mergeTemplateIntoString(
+			//           velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationText.vm", "UTF-8", model);
 			
 			String textHtml = VelocityEngineUtils.mergeTemplateIntoString(
 			           velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationHtml.vm", "UTF-8", model);
 			
 			logger.debug(textHtml);
 			
-			helper.setText("김요한", true);
+			helper.setText(textHtml, true);
 			
 			mailSender.send(message);
 		} catch (Exception e) {
@@ -168,6 +169,20 @@ public class SignupController {
 
 		if (formBinding.hasErrors()) {
 			return null;
+		}
+		
+		if ( StringUtils.isEmpty(form.getAuthcd())){
+			Connection<?> connection = ProviderSignInUtils.getConnection(request);
+			if(StringUtils.isEmpty(connection.fetchUserProfile().getEmail())){
+				return null;
+			}
+			form.setMemail(connection.fetchUserProfile().getEmail());
+		}else{
+			MemberAuthCd memberAuthCd = memberAuthCdMapper.read(form.getMemail(), form.getAuthcd());
+
+			if(memberAuthCd == null || StringUtils.isEmpty(memberAuthCd.getMemail())){
+				return null;
+			}
 		}
 
 		ProfileImageUploader.upload( env.getProperty("fileupload.profile"), form );

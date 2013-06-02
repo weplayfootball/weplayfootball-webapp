@@ -21,14 +21,14 @@
       	mpasswd , muid 		, mtel 	,
       	mlevel	, mimage	, mimagesize , 
       	mip 	, mposition	, mlocal, 
-      	mintro
+      	mintro	, mlevel
       )
     values
       (	msno_seq.nextval			, #{mname} 						, #{memail},
       	#{mpasswd,jdbcType=VARCHAR} , #{muid,jdbcType=VARCHAR} 		, #{mtel,jdbcType=VARCHAR},
       	#{mlevel,jdbcType=CHAR}		, #{mimage,jdbcType=VARCHAR}	, #{mimagesize,jdbcType=NUMERIC} ,
       	#{mip,jdbcType=VARCHAR} 	, #{mposition,jdbcType=VARCHAR}	, #{mlocal,jdbcType=VARCHAR}, 
-      	#{mintro,jdbcType=VARCHAR}
+      	#{mintro,jdbcType=VARCHAR}	, 'DA'
       )
   </insert>
 

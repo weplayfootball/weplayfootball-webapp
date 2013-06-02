@@ -39,9 +39,10 @@
 			                <div class="input-prepend">
 			                	<a href="#" id="btnSigninTW"><img src="<c:url value="/resources/social/twitter/sign-in-with-twitter-d.png"/>" /></a>
 			                </div>
+			                
+		                	<hr />
 			            </div>
 		                
-		                <hr />
 		                
 		                <div id="byEmail">
 		                	<form id="authByEmailForm">
@@ -61,6 +62,13 @@
 				                <p class="text-info" id="emailValidMsg">이름과 이메일 주소를 넣고 <code>이메일인증</code> 버튼을 클릭하세요.</p>
 				            </form>
 		                </div>
+		                
+		                <div id="doneEmailAuth" class="hide">
+		                	<h4><strong>이메일 인증 메일이 발송되었습니다.</strong> </h4>
+		                	<hr />
+		                	<h5>이메일을 확인하시고, 회원가입을 진행해주세요.</h5>
+		                	<h5>감사합니다.</h5>
+		                </div>
 		            </div>
 				
 				</c:when>
@@ -68,118 +76,92 @@
 				
 				<%-- signup STEP 2 --%>
 				<c:otherwise>
-					
+
 					<c:url value="/signup" var="signupUrl" />
-					<form:form id="signup" action="${signupUrl}" method="post" modelAttribute="signupForm" enctype="multipart/form-data" class="reg-page">
-		        		<form:hidden path="memail" value="${signupForm.memail}"/>
-		        		
-			        	<s:bind path="*">
-							<c:choose>
-								<c:when test="${status.error}">
-									<div class="alert alert-error">
-						                <button type="button" class="close" data-dismiss="alert">&times;</button>
-						               	<strong>등록할 수 없습니다.</strong> 입력이 잘못된 부분을 다시 작성하시고 등록해주세요.
-						            </div>
-								</c:when>
-								<c:otherwise>
-									<div class="alert alert-success">
-									    <button type="button" class="close" data-dismiss="alert">&times;</button>
-						               		아래  정보를 입력하시면 회원가입이 완료됩니다.
-						            </div>
-					            </c:otherwise>
-							</c:choose>                     
-						</s:bind>
-		            	<div class="controls">
-		                    <div class="span12">
-		                		<p><strong>이메일 : ${signupForm.memail}</strong></p>
-		                	</div>
-						</div>
-		                <div class="controls">    
-		                    <div class="span6">
-			                    <form:label path="mname">이름  <span class="color-red">*</span> <form:errors path="mname" cssClass="label label-important" /></form:label>
-								<form:input path="mname"  cssClass="span12" />		
+					<form:form id="signup" action="${signupUrl}" method="post" modelAttribute="signupForm" enctype="multipart/form-data">
+			            <div class="span6">
+			                <div class="headline"><h3>기본 정보</h3></div>
+			                <s:bind path="*">
+								<c:choose>
+									<c:when test="${status.error}">
+										<div class="alert alert-error">
+							                <button type="button" class="close" data-dismiss="alert">&times;</button>
+							               	<strong>등록할 수 없습니다.</strong> 입력이 잘못된 부분을 다시 작성하시고 등록해주세요.
+							            </div>
+									</c:when>
+									<c:otherwise>
+										<div class="alert alert-success">
+										    <button type="button" class="close" data-dismiss="alert">&times;</button>
+							               		아래  정보를 입력하시면 회원가입이 완료됩니다.
+							            </div>
+						            </c:otherwise>
+								</c:choose>                     
+							</s:bind>
+		                    <div class="control-group">
+		                        <label class="control-label" for="inputEmail">Email</label>
+		                        <div class="controls"><h4><strong>${signupForm.memail}</strong></h4></div>
 		                    </div>
-		                    <div class="span6">
-		                    	<label>프로필 사진 </label>
-		                    	<input type="file" name="profileFile" class="span12" />
+		                    <div class="control-group">
+		                    	<form:label path="mname" cssClass="control-label">이름  <span class="color-red">*</span> <form:errors path="mname" cssClass="label label-important" /></form:label>
+								<div class="controls"><form:input path="mname"  cssClass="border-radius-none" /></div>
 		                    </div>
-		                </div>
-		                <div class="controls">
-		                    <div class="span6">
-			               		<form:label path="mpasswd">패스워드 (6자리 이상) <span class="color-red">*</span> <form:errors path="mpasswd" cssClass="label label-important" /></form:label>
-								<form:password path="mpasswd"  cssClass="span12" />
+		                    <div class="control-group">
+								<form:label path="mpasswd" cssClass="control-label">패스워드 (6자리 이상) <span class="color-red">*</span> <form:errors path="mpasswd" cssClass="label label-important" /></form:label>
+								<div class="controls">
+									<form:password path="mpasswd" cssClass="border-radius-none" />
+									<input type="password" id="mpasswd_confirm" class="border-radius-none"/>
+								</div>
 		                    </div>
-		                    <div class="span6">
-		                    	<label>패스워드 확인 </label>
-								<input type="password" id="mpasswd_confirm"  class="span12" />
+		                    <div class="control-group">
+		                        <label class="control-label" for="profileFile">사진</label>
+		                        <div class="controls">
+		                        	<input type="file" name="profileFile" class="border-radius-none" />
+		                        </div>
 		                    </div>
-		                </div>
-		                
-		                <div class="controls">
-		                    <div class="span12">
-		                		<hr />
-		                	</div>
-						</div>
-		                
-		                <div class="controls">
-		                    <div class="span6">
-								<form:label path="mposition">주력 포지션 </form:label>
-								<select class="span6" name='mposition'>
-									<option value='coach'>coach</option>
-									<option value='FW'>FW</option>
-									<option value='AMF'>AMF</option>
-									<option value='DMF'>DMF</option>
-									<option value='DF'>DF</option>
-									<option value='GK'>GK</option>
-								</select>
-		                    </div>
-		                    <div class="span6">
-								<form:label path="mlocal">활동 지역</form:label>
-								<select class="span6" name='mlocal1'>
-									<option value='coach'>coach</option>
-									<option value='FW'>FW</option>
-									<option value='AMF'>AMF</option>
-									<option value='DMF'>DMF</option>
-									<option value='DF'>DF</option>
-									<option value='GK'>GK</option>
-								</select>
-								<select class="span6" name='mlocal'>
-									<option value='coach'>coach</option>
-									<option value='FW'>FW</option>
-									<option value='AMF'>AMF</option>
-									<option value='DMF'>DMF</option>
-									<option value='DF'>DF</option>
-									<option value='GK'>GK</option>
-								</select>
-		                    </div>
-		                </div>
-		                <div class="controls">
-		                    <div class="span12">
-								<form:label path="mintro">자기 소개</form:label>
-								<textarea class="span12 border-radius-none" rows="3" name='mintro' id='mintro' >매너있고 실력있는 멋진 축구인입니다~ 함께 뛰실 분들 언제든지 환영합니다!! 연락주세요 *^^*</textarea>
-							</div> 
-		                </div>
-		                <div class="controls form-inline">
-		                    <div class="span12">
-		                    	<!-- label class="checkbox">
-		                    	<input type="checkbox" checked name="checkemail">이메일공개<br>
-						        <input type="checkbox" checked name="checktel">전화번호공개<br>
-						        <input type="checkbox" checked name="checkusermsg">유저로부터의 경기초청수신<br>
-						        <input type="checkbox" checked name="checkaddmsg">weplayfootball 소식수신
-		                    	</label -->
-			                    <button class="btn-u pull-right" type="submit"><strong>등록하기</strong> </button>
-		                    </div> 
-		                </div>
-		                <div class="controls">
-		                    <div class="span12">
-		                		<hr />
-		                	</div>
-						</div>
-		                <div class="controls">
-		                    <div class="span12">
-		                    	이미 가입하셨다면, <a href="<c:url value="/signin"/>" class="color-green"><strong>로그인 화면</strong></a>으로 이동하세요.
-							</div>
-						</div>
+			            </div>
+			
+			            <div class="span6">
+							<div class="headline"><h3>추가 정보</h3></div>
+							
+							<form:label path="mtel">연락처 <span class="color-red">*</span> <form:errors path="mtel" cssClass="label label-important" /></form:label>
+							<form:input path="mtel"  cssClass="border-radius-none" />
+							
+							<form:label path="mposition">주력 포지션 <span class="color-red">*</span> <form:errors path="mposition" cssClass="label label-important" /></form:label>
+							<select class="span6" name='mposition'>
+								<option value='coach'>coach</option>
+								<option value='FW'>FW</option>
+								<option value='AMF'>AMF</option>
+								<option value='DMF'>DMF</option>
+								<option value='DF'>DF</option>
+								<option value='GK'>GK</option>
+							</select>
+							
+							<form:label path="mlocal">활동 지역<span class="color-red">*</span> <form:errors path="mlocal" cssClass="label label-important" /></form:label>
+							<select class="span6" name='mlocal1' id='mlocal1'>
+							</select>
+							<select class="span6" name='mlocal' id='mlocal'>
+							</select>
+							
+							<form:label path="mintro">자기 소개</form:label>
+							<textarea class="span12 border-radius-none" rows="4" name='mintro' id='mintro' >매너있고 실력있는 멋진 축구인입니다~ 함께 뛰실 분들 언제든지 환영합니다!! 연락주세요 *^^*</textarea>
+							
+			            </div>
+						
+ 						<div class="span12">
+							<hr />
+	                    	<!-- label class="checkbox">
+	                    	<input type="checkbox" checked name="checkemail">이메일공개<br>
+					        <input type="checkbox" checked name="checktel">전화번호공개<br>
+					        <input type="checkbox" checked name="checkusermsg">유저로부터의 경기초청수신<br>
+					        <input type="checkbox" checked name="checkaddmsg">weplayfootball 소식수신
+	                    	</label -->
+		                    <button class="btn-u pull-right" type="submit"><strong>등록하기</strong> </button>&nbsp;&nbsp;&nbsp;
+	                    </div> 
+ 						<div class="span12">
+	                    	  이미 가입하셨다면, <a href="<c:url value="/signin"/>" class="color-green"><strong>로그인 화면</strong></a>으로 이동하세요.
+	                   	</div>
+					<form:hidden path="memail" value="${signupForm.memail}"/>
+					<form:hidden path="authcd" value="${signupForm.authcd}"/>
 		            </form:form>
 				</c:otherwise>
 			</c:choose>

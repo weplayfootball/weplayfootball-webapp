@@ -41,7 +41,11 @@ $(document).ready(function(){;
 			type: "post",
 			data: values,
 			success: function(data){
-		          console.log(data)
+				if(data.status == "ok"){
+					$("#bySNS").hide();
+					$("#byEmail").hide();
+					$("#doneEmailAuth").show();
+				}
 			},
 			error:function(){
 		          bootstrap_alert.warning('시스템 문제로 인해 전송하지 못했습니다.', 'error');
@@ -59,6 +63,43 @@ $(document).ready(function(){;
 <%-- signup STEP 2 --%>
 <c:otherwise>
 
+	$.ajax({
+		url: '<c:url value="/signup/glocaldo"/>',
+		success: function(data){
+			$('#mlocal1').html('');
+			$('#mlocal1').append($('<option>', { 
+		        value: '', text : '-- 선택하세요 --' 
+		    }));
+			$.each(data, function(k, v){
+				$('#mlocal1').append($('<option>', { 
+			        value: v, text : v 
+			    }));
+			});
+		},
+		error:function(){
+	          bootstrap_alert.warning('시스템 문제로 인해 전송하지 못했습니다.', 'error');
+		}   
+	});
+
+	$('#mlocal1').change(function(){
+		var glocaldo = $(this).find("option:selected").val();
+	    $.ajax({
+			url: '<c:url value="/signup/glocalsi/"/>'+glocaldo,
+			success: function(data){
+				$('#mlocal').html('');
+				$.each(data, function(k, v){
+					$('#mlocal').append($('<option>', { 
+				        value: v, text : v 
+				    }));
+				});
+			},
+			error:function(){
+		          bootstrap_alert.warning('시스템 문제로 인해 전송하지 못했습니다.', 'error');
+			}   
+		});
+
+	});
+	
 </c:otherwise>
 </c:choose>
 

@@ -10,19 +10,22 @@ import fm.weplayfootball.persistence.domain.Member;
 
 public class SignupForm {
 
-	@NotEmpty
+	@NotEmpty( message = "메일 주소를 입려해야 합니다.")
 	private String memail;
 
-	@Size(min = 6, message = "must be at least 6 characters")
+	@Size(min = 6, message = "암호는 6자 이상 이어야 합니다.")
 	private String mpasswd;
 
+	@NotEmpty( message = "연락처를 입력하세요.")
 	private String mtel;
 
-	@NotEmpty
+	@NotEmpty( message = "이름을 입력하세요.")
 	private String mname;
 
+	@NotEmpty( message = "주력 포지션을 선택하세요.")
 	private String mposition;
 
+	@NotEmpty( message = "지역 정보를 선택하세요.")
 	private String mlocal;
 
 	private String mintro;
