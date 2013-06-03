@@ -39,7 +39,7 @@ public class DebugController {
 	@RequestMapping("/debug/member/{memail}")
 	@ResponseBody
 	public Member jsontest(@PathVariable String memail, Model model) {
-		Member member = memberMapper.read(memail);
+		Member member = memberMapper.getByMemail(memail);
 		System.out.println(member);
 		return member;
 	}

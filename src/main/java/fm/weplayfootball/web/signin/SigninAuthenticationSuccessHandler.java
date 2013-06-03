@@ -34,7 +34,7 @@ public class SigninAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 		super.onAuthenticationSuccess(request, response, authentication);
 		
 		HttpSession session = request.getSession(true);
-		Member member = memberMapper.read(authentication.getName());
+		Member member = memberMapper.getByMemail(authentication.getName());
 
 		session.setAttribute("MEMBER", member);
 

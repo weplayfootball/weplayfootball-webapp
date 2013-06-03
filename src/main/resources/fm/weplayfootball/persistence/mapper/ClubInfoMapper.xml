@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fm.weplayfootball.persistence.mapper.GroundsMapper">
+
+<!-- <  &lt;   > &gt; -->
+
+  <cache />
+
+
+  <select id="getCsno" resultType="int">
+	 SELECT csno_seq.nextval csno FROM DUAL
+  </select>
+
+  <select id="getByCname" parameterType="String" resultType="ClubInfo">
+	 SELECT CSNO
+	      , CNAME
+	      , CLOCAL
+	      , CTIME
+	      , CIP
+	      , CMAKER
+	      , CMAKERNAME
+	      , IMAGE
+	      , COUNT
+	   FROM CLUB_INFO
+	  WHERE CNAME = #{cname}
+  	</select>
+
+  <select id="getByCsno" parameterType="int" resultType="ClubInfo">
+	 SELECT CSNO
+	      , CNAME
+	      , CLOCAL
+	      , CTIME
+	      , CIP
+	      , CMAKER
+	      , CMAKERNAME
+	      , IMAGE
+	      , COUNT
+	   FROM CLUB_INFO
+	  WHERE CSNO = #{csno}
+  	</select>
+   
+   
+  <select id="listClubInfo" parameterType="SearchCondition" resultType="ClubInfoList">
+  select *
+	from (
+	        select rownum as rn, a.*
+	        from (
+	          select CI.csno, 
+	                 CI.cname, 
+	                 CI.clocal, 
+	                 CR.month, 
+	                 CR.year, 
+	                 CR.total,
+	                 (
+	                 	select count(*) as cnt 
+	                 	  from clubmember 
+	                 	 where cmLevel != 'ZA' 
+	                 	   and cmLevel != 'XA' 
+	                 	   and cmLevel != 'QA' 
+	                 	   and cmcsno = CI.csno
+	                 	   
+			               <if test="srchType == 'msno'">
+			               and cmMsno =  #{srchValue}
+			               </if>
+			               
+	                 ) members
+	            from club_info CI
+	               , club_rank CR
+	           where CI.csno = CR.csno
+	           
+				<if test="srchType == 'cname'">
+	             and CI.cname = #{srchValue}
+	            </if>
+	            
+	            <if test="srchType == 'clocal'">
+	             and CI.clocal = #{srchValue}
+	            </if>
+	            
+	            ) a
+	    )
+	where rownum  &lt;= #{pageSize}
+	    and rn &gt; (#{pageNum}-1)*#{pageSize}
+  </select>
+  
+  <insert id="insert" parameterType="ClubInfo">
+	insert into club_info(
+		csno	,cname	,clocal,
+		ctime	,cip	,cmaker,
+		cmakername
+	) values (
+		csno_seq.nextval	,#{cname,jdbcType=VARCHAR}	,#{mlocal,jdbcType=VARCHAR},
+		to_char(sysdate, 'yyyymmddhh24miss')	,#{cip,jdbcType=VARCHAR} ,#{cmaker,jdbcType=NUMERIC},
+		#{cmakername,jdbcType=VARCHAR}
+	)
+  </insert>
+
+</mapper>

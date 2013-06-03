@@ -4,8 +4,8 @@ import fm.weplayfootball.persistence.domain.Member;
 
 public interface MemberMapper {
 
-	Member read(String memail);
-	Member readsno(String msno);
+	Member getByMemail(String memail);
+	Member getByMsno(int msno);
 	void insert(Member member);
 
 }

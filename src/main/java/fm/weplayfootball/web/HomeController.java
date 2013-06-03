@@ -35,7 +35,7 @@ public class HomeController {
 		if(currentUser != null){
 			HttpSession session = request.getSession();
 			if(session.getAttribute("MEMBER") == null){
-				Member member = memberMapper.read(currentUser.getName());
+				Member member = memberMapper.getByMemail(currentUser.getName());
 				if(member != null) session.setAttribute("MEMBER", member);
 			}
 		}

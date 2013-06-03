@@ -8,10 +8,10 @@
 
   
   
-  <select id="read" parameterType="string" resultType="Member">
+  <select id="getByMemail" parameterType="string" resultType="Member">
 	select * from member where memail =  #{memail}
   </select>
-  <select id="readsno" parameterType="string" resultType="Member">
+  <select id="getByMsno" parameterType="int" resultType="Member">
 	select * from member where msno =  #{msno}
   </select>
 

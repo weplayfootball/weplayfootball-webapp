@@ -1,4 +1,4 @@
-package fm.weplayfootball.web.signup.domain;
+package fm.weplayfootball.web.member.domain;
 
 import javax.validation.constraints.Size;
 
@@ -7,9 +7,13 @@ import org.springframework.social.connect.UserProfile;
 import org.springframework.web.multipart.MultipartFile;
 
 import fm.weplayfootball.persistence.domain.Member;
+import fm.weplayfootball.web.signup.domain.SignupForm;
 
-public class SignupForm {
-
+public class MemberForm {
+	
+	@NotEmpty
+	private int msno;
+	
 	@NotEmpty( message = "메일 주소를 입려해야 합니다.")
 	private String memail;
 
@@ -30,14 +34,18 @@ public class SignupForm {
 
 	private String mintro;
 
-	private String authcd;
-	
 	private String mimage;
 	private int mimagesize;
-	
+
 	private MultipartFile atchFile;
 
 
+	public int getMsno() {
+		return msno;
+	}
+	public void setMsno(int msno) {
+		this.msno = msno;
+	}
 	public MultipartFile getAtchFile() {
 		return atchFile;
 	}
@@ -98,16 +106,11 @@ public class SignupForm {
 	public void setMimagesize(int mimagesize) {
 		this.mimagesize = mimagesize;
 	}
-	
-	public String getAuthcd() {
-		return authcd;
-	}
-	public void setAuthcd(String authcd) {
-		this.authcd = authcd;
-	}
-	
+
+
 	public Member toMember(){
 		Member member = new Member();
+		member.setMsno(msno);
 		member.setMemail(memail);
 		member.setMpasswd(mpasswd);
 		member.setMtel(mtel);
@@ -115,20 +118,28 @@ public class SignupForm {
 		member.setMposition(mposition);
 		member.setMlocal(mlocal);
 		member.setMintro(mintro);
+		
+		// @ TODO 
 		member.setMimage(mimage);
 		member.setMimagesize(mimagesize);
-		
+
 		return member;
 	}
 
-	
-	
-	public static SignupForm fromProviderUser(UserProfile providerUser) {
+	public static MemberForm fromProviderUser(Member member) {
 
-		// @ TODO Form 에 추가 정의 필요!!!!
-		SignupForm form = new SignupForm();
-		form.setMemail(providerUser.getEmail());
-		form.setMname(providerUser.getName());
+		MemberForm form = new MemberForm();
+		form.setMsno(member.getMsno());
+		form.setMemail(member.getMemail());
+		form.setMpasswd(member.getMpasswd());
+		form.setMtel(member.getMtel());
+		form.setMname(member.getMname());
+		form.setMposition(member.getMposition());
+		form.setMlocal(member.getMlocal());
+		form.setMintro(member.getMintro());
+		form.setMimage(member.getMimage());
+		form.setMimagesize(member.getMimagesize());
+		
 		return form;
 
 	}

@@ -38,6 +38,7 @@ import fm.weplayfootball.persistence.domain.MemberAuthCd;
 import fm.weplayfootball.persistence.mapper.GroundsMapper;
 import fm.weplayfootball.persistence.mapper.MemberAuthCdMapper;
 import fm.weplayfootball.persistence.mapper.MemberMapper;
+import fm.weplayfootball.web.common.utils.EmailValidator;
 import fm.weplayfootball.web.message.Message;
 import fm.weplayfootball.web.message.MessageType;
 import fm.weplayfootball.web.signin.SignInUtils;
@@ -55,6 +56,7 @@ public class SignupController {
 	@Autowired private VelocityEngine velocityEngine;
 
 	@Autowired Environment env;
+	@Autowired EmailValidator emailValidator;
 
 	static final Logger logger = Logger.getLogger(SignupController.class); 
 
@@ -116,6 +118,11 @@ public class SignupController {
 
 		ResultAuthCd resultAuthCd = new ResultAuthCd("ok");
 
+		if(!emailValidator.validate(email)){
+			return new ResultAuthCd("error", "메일 주소가 잘못되었습니다.");
+		}
+		
+		
 		String authCd = generateAuthPassword();
 
 		MemberAuthCd memberAuthcd = new MemberAuthCd();
@@ -129,7 +136,6 @@ public class SignupController {
 			memberAuthCdMapper.update(memberAuthcd);
 			resultAuthCd.setMessage("duplicate");
 		}
-
 		
 		try {
 			
