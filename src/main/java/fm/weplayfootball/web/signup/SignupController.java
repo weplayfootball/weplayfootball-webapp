@@ -6,18 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.VelocityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.social.connect.Connection;
@@ -33,12 +29,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
+import fm.weplayfootball.common.utils.EmailValidator;
 import fm.weplayfootball.persistence.domain.Member;
 import fm.weplayfootball.persistence.domain.MemberAuthCd;
 import fm.weplayfootball.persistence.mapper.GroundsMapper;
 import fm.weplayfootball.persistence.mapper.MemberAuthCdMapper;
 import fm.weplayfootball.persistence.mapper.MemberMapper;
-import fm.weplayfootball.web.common.utils.EmailValidator;
 import fm.weplayfootball.web.message.Message;
 import fm.weplayfootball.web.message.MessageType;
 import fm.weplayfootball.web.signin.SignInUtils;
@@ -52,11 +48,11 @@ public class SignupController {
 	@Autowired private MemberAuthCdMapper 	memberAuthCdMapper;	
 	@Autowired private GroundsMapper 		groundsMapper;	
 
-	@Autowired private JavaMailSender mailSender;
-	@Autowired private VelocityEngine velocityEngine;
+	@Autowired private JavaMailSender 		mailSender;
+	@Autowired private VelocityEngine 		velocityEngine;
 
-	@Autowired Environment env;
-	@Autowired EmailValidator emailValidator;
+	@Autowired private Environment 			env;
+	@Autowired private EmailValidator 		emailValidator;
 
 	static final Logger logger = Logger.getLogger(SignupController.class); 
 
@@ -83,17 +79,17 @@ public class SignupController {
 
 		} else {
 
-			String email = request.getParameter("email");
-			String authCd = request.getParameter("auth");
+			String email 	= request.getParameter("email");
+			String authCd 	= request.getParameter("auth");
 			if(StringUtils.hasText(authCd)){
-				
+
 				MemberAuthCd memberAuthCd = memberAuthCdMapper.read(email, authCd);
 
 				if(memberAuthCd != null && StringUtils.hasText(memberAuthCd.getMemail())){
 					SignupForm form = new SignupForm();
-					form.setMname(	memberAuthCd.getMname()		);
-					form.setMemail(	memberAuthCd.getMemail()	);
-					form.setAuthcd(	memberAuthCd.getMauthcd()	);
+					form.setMname	(memberAuthCd.getMname());
+					form.setMemail	(memberAuthCd.getMemail());
+					form.setAuthcd	(memberAuthCd.getMauthcd());
 					return form;
 				}else{
 					request.setAttribute("message", new Message(MessageType.ERROR, "신규가입 인증번호가 만료되었거나 유효하지 않습니다. 다시 회원 가입 하십시오."), WebRequest.SCOPE_REQUEST);
@@ -121,14 +117,14 @@ public class SignupController {
 		if(!emailValidator.validate(email)){
 			return new ResultAuthCd("error", "메일 주소가 잘못되었습니다.");
 		}
-		
-		
+
+
 		String authCd = generateAuthPassword();
 
 		MemberAuthCd memberAuthcd = new MemberAuthCd();
-		memberAuthcd.setMname(name);
-		memberAuthcd.setMemail(email);
-		memberAuthcd.setMauthcd(authCd);
+		memberAuthcd.setMname	(name);
+		memberAuthcd.setMemail	(email);
+		memberAuthcd.setMauthcd	(authCd);
 
 		try {
 			memberAuthCdMapper.insert(memberAuthcd);
@@ -136,30 +132,31 @@ public class SignupController {
 			memberAuthCdMapper.update(memberAuthcd);
 			resultAuthCd.setMessage("duplicate");
 		}
-		
+
 		try {
-			
+
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-			helper.setFrom(		"hur.ikhan@ninetofiveinc.com");
-			helper.setTo(		email);
-			helper.setSubject(	name+" 님, WePlayFootBall 에서 인증메일을 보냅니다");
-			
+			helper.setFrom		("hur.ikhan@ninetofiveinc.com");
+			helper.setTo		(email);
+			helper.setSubject	(name+" 님, WePlayFootBall 에서 인증메일을 보냅니다");
+
 			memberAuthcd.setMemail(URLEncoder.encode(email, "UTF-8"));
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("auth", memberAuthcd);
-			
+
 			//String textText = VelocityEngineUtils.mergeTemplateIntoString(
 			//           velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationText.vm", "UTF-8", model);
-			
+
 			String textHtml = VelocityEngineUtils.mergeTemplateIntoString(
-			           velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationHtml.vm", "UTF-8", model);
-			
+					velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationHtml.vm", "UTF-8", model);
+
 			logger.debug(textHtml);
-			
+
 			helper.setText(textHtml, true);
-			
+
 			mailSender.send(message);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResultAuthCd("error", e.getMessage());
@@ -176,7 +173,7 @@ public class SignupController {
 		if (formBinding.hasErrors()) {
 			return null;
 		}
-		
+
 		if ( StringUtils.isEmpty(form.getAuthcd())){
 			Connection<?> connection = ProviderSignInUtils.getConnection(request);
 			if(StringUtils.isEmpty(connection.fetchUserProfile().getEmail())){
@@ -206,11 +203,10 @@ public class SignupController {
 	private Member createMember(SignupForm form, BindingResult formBinding) {
 		try {
 			Member member = form.toMember();
-			System.out.println(member);
 			memberMapper.insert(member);
 			return member;
 		} catch (DuplicateKeyException e) {
-			formBinding.rejectValue("username", "user.duplicateUsername", "already in use");
+			formBinding.rejectValue("mname", "user.duplicateUsername", "already in use");
 			return null;
 		}
 	}

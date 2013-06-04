@@ -60,11 +60,6 @@
 	                 	   and cmLevel != 'XA' 
 	                 	   and cmLevel != 'QA' 
 	                 	   and cmcsno = CI.csno
-	                 	   
-			               <if test="srchType == 'msno'">
-			               and cmMsno =  #{srchValue}
-			               </if>
-			               
 	                 ) members
 	            from club_info CI
 	               , club_rank CR
@@ -78,6 +73,75 @@
 	             and CI.clocal = #{srchValue}
 	            </if>
 	            
+          	   	order by 
+          	   	<choose>
+				  <when test="sortName == 'clocal'">
+				    CI.clocal
+				  </when>
+				  <when test="sortName == 'total'">
+				    CR.total
+				  </when>
+				  <otherwise>
+				    CI.clocal
+				  </otherwise>
+				</choose>
+	            ) a
+	    )
+	where rownum  &lt;= #{pageSize}
+	    and rn &gt; (#{pageNum}-1)*#{pageSize}
+  </select>
+   
+  <select id="listMyClubInfo" parameterType="SearchCondition" resultType="ClubInfoList">
+  select *
+	from (
+	        select rownum as rn, a.*
+	        from (
+	          select CI.csno, 
+	                 CI.cname, 
+	                 CI.clocal, 
+	                 CR.month, 
+	                 CR.year, 
+	                 CR.total,
+	                 (
+	                 	select count(*) as cnt 
+	                 	  from clubmember 
+	                 	 where cmLevel != 'ZA' 
+	                 	   and cmLevel != 'XA' 
+	                 	   and cmLevel != 'QA' 
+	                 	   and cmcsno = CI.csno
+	                 ) members
+	            from club_info CI
+	               , club_rank CR
+	               , (
+	                 	select count(*) as cnt 
+	                 	  from clubmember 
+	                 	 where cmLevel != 'ZA' 
+	                 	   and cmLevel != 'XA' 
+	                 	   and cmLevel != 'QA' 
+	                 	   and cmcsno = CI.csno
+	                 ) members
+	           where CI.csno = CR.csno
+	           
+				<if test="srchType == 'cname'">
+	             and CI.cname = #{srchValue}
+	            </if>
+	            
+	            <if test="srchType == 'clocal'">
+	             and CI.clocal = #{srchValue}
+	            </if>
+	            
+          	   	order by 
+          	   	<choose>
+				  <when test="sortName == 'clocal'">
+				    CI.clocal
+				  </when>
+				  <when test="sortName == 'total'">
+				    CR.total
+				  </when>
+				  <otherwise>
+				    CI.clocal
+				  </otherwise>
+				</choose>
 	            ) a
 	    )
 	where rownum  &lt;= #{pageSize}

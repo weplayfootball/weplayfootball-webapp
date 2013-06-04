@@ -33,13 +33,15 @@ public class ClubController {
 	public List<ClubInfoList> listClubInfo(
 			@RequestParam("srchType") 	String 	srchType,
 			@RequestParam("srchValue") 	String 	srchValue,
+			@RequestParam("sortName") 	String 	sortName,
 			@RequestParam("pageNum") 	int 	pageNum
 			) {
 
 		SearchCondition searchCond = new SearchCondition();
-		searchCond.setSrchType(srchType);
-		searchCond.setSrchValue(srchValue);
-		searchCond.setPageNum(pageNum);
+		searchCond.setSrchType	(srchType);
+		searchCond.setSrchValue	(srchValue);
+		searchCond.setSortName	(sortName);
+		searchCond.setPageNum	(pageNum);
 
 		List<ClubInfoList> list = clubInfoMapper.listClubInfo(searchCond);
 
@@ -58,27 +60,22 @@ public class ClubController {
 			HttpServletRequest request,
 			HttpSession session) {
 
-		if (formBinding.hasErrors()) {
-			return null;
-		}
 
 		ClubInfo clubInfo = clubInfoMapper.getByCname(param.getCname());
-		if(clubInfo != null){
-			ObjectError error = new ObjectError("cname","이미 사용중인 클럼 이름입니다.");
-			formBinding.addError(error);
-			return null;
-		}
+		if(clubInfo != null) formBinding.addError(new ObjectError("cname","이미 사용중인 클럼 이름입니다."));
 
+		if (formBinding.hasErrors()) return null;
+		
 		int csno = clubInfoMapper.getCsno();
 		Member member = (Member) session.getAttribute("MEMBER");
 
 		clubInfo = new ClubInfo();
-		clubInfo.setCsno(csno);
-		clubInfo.setCmaker(member.getMsno());
-		clubInfo.setCmakername(member.getMname());
-		clubInfo.setCip(request.getRemoteAddr());
-		clubInfo.setCname(param.getCname());
-		clubInfo.setClocal(param.getClocal());
+		clubInfo.setCsno		(csno);
+		clubInfo.setCmaker		(member.getMsno());
+		clubInfo.setCmakername	(member.getMname());
+		clubInfo.setCip			(request.getRemoteAddr());
+		clubInfo.setCname		(param.getCname());
+		clubInfo.setClocal		(param.getClocal());
 
 		clubInfoMapper.insert(clubInfo);
 
@@ -93,6 +90,5 @@ public class ClubController {
 
 		return "club/info";
 	}
-
 
 }

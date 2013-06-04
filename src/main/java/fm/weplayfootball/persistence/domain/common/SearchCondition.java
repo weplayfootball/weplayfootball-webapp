@@ -5,6 +5,7 @@ public class SearchCondition extends PagingDomain {
 
 	private String srchType;
 	private String srchValue;
+	private String sortName;
 
 	public String getSrchType() {
 		return srchType;
@@ -17,6 +18,12 @@ public class SearchCondition extends PagingDomain {
 	}
 	public void setSrchValue(String srchValue) {
 		this.srchValue = srchValue;
+	}
+	public String getSortName() {
+		return sortName;
+	}
+	public void setSortName(String sortName) {
+		this.sortName = sortName;
 	}
 
 

@@ -7,6 +7,8 @@ public interface MemberMapper {
 	Member getByMemail(String memail);
 	Member getByMsno(int msno);
 	void insert(Member member);
+	void update(Member member);
+	void updatePassword(int msno, String password);
 
 }
 

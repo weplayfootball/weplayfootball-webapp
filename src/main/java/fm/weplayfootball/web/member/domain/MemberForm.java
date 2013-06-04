@@ -1,24 +1,17 @@
 package fm.weplayfootball.web.member.domain;
 
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.social.connect.UserProfile;
 import org.springframework.web.multipart.MultipartFile;
 
 import fm.weplayfootball.persistence.domain.Member;
-import fm.weplayfootball.web.signup.domain.SignupForm;
 
 public class MemberForm {
-	
+
 	@NotEmpty
 	private int msno;
-	
+
 	@NotEmpty( message = "메일 주소를 입려해야 합니다.")
 	private String memail;
-
-	@Size(min = 6, message = "암호는 6자 이상 이어야 합니다.")
-	private String mpasswd;
 
 	@NotEmpty( message = "연락처를 입력하세요.")
 	private String mtel;
@@ -57,12 +50,6 @@ public class MemberForm {
 	}
 	public void setMemail(String memail) {
 		this.memail = memail;
-	}
-	public String getMpasswd() {
-		return mpasswd;
-	}
-	public void setMpasswd(String mpasswd) {
-		this.mpasswd = mpasswd;
 	}
 	public String getMtel() {
 		return mtel;
@@ -112,13 +99,12 @@ public class MemberForm {
 		Member member = new Member();
 		member.setMsno(msno);
 		member.setMemail(memail);
-		member.setMpasswd(mpasswd);
 		member.setMtel(mtel);
 		member.setMname(mname);
 		member.setMposition(mposition);
 		member.setMlocal(mlocal);
 		member.setMintro(mintro);
-		
+
 		// @ TODO 
 		member.setMimage(mimage);
 		member.setMimagesize(mimagesize);
@@ -126,12 +112,11 @@ public class MemberForm {
 		return member;
 	}
 
-	public static MemberForm fromProviderUser(Member member) {
+	public static MemberForm fromMemberObject(Member member) {
 
 		MemberForm form = new MemberForm();
 		form.setMsno(member.getMsno());
 		form.setMemail(member.getMemail());
-		form.setMpasswd(member.getMpasswd());
 		form.setMtel(member.getMtel());
 		form.setMname(member.getMname());
 		form.setMposition(member.getMposition());
@@ -139,7 +124,7 @@ public class MemberForm {
 		form.setMintro(member.getMintro());
 		form.setMimage(member.getMimage());
 		form.setMimagesize(member.getMimagesize());
-		
+
 		return form;
 
 	}
