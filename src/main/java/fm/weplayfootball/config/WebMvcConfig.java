@@ -1,36 +1,33 @@
 package fm.weplayfootball.config;
 
 import java.util.List;
-import java.util.Properties;
 
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.util.ClassUtils;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles2.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles2.TilesView;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = "fm.weplayfootball.web", excludeFilters = { @Filter(Configuration.class) })
+@ComponentScan(basePackages = {"fm.weplayfootball.web","fm.weplayfootball.common.utils"}, excludeFilters = { @Filter(Configuration.class) })
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	@Inject
@@ -81,7 +78,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public MultipartResolver multipartResolver() {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(100000);
+		resolver.setMaxUploadSize(1000000);
 		return resolver;
 	}
 	/*
@@ -96,5 +93,5 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         b.setExceptionMappings(mappings);
         return b;
     }
-	*/
+	 */
 }

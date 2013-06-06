@@ -1,18 +1,10 @@
 package fm.weplayfootball.persistence.domain;
 
-public class ClubInfo {
+import java.io.Serializable;
 
-	/**
-CSNO       NOT NULL NUMBER(38)    
-CNAME               VARCHAR2(50)  
-CLOCAL              VARCHAR2(50)  
-CTIME               CHAR(14)      
-CIP                 VARCHAR2(50)  
-CMAKER     NOT NULL NUMBER(38)    
-CMAKERNAME          VARCHAR2(50)  
-IMAGE               VARCHAR2(100) 
-COUNT               NUMBER(38)  
-	 */
+public class ClubInfo implements Serializable {
+
+	private static final long serialVersionUID = -1234763285873853072L;
 	
 	private int csno;
 	private String cname;
@@ -23,6 +15,7 @@ COUNT               NUMBER(38)
 	private String cmakername;
 	private String image;
 	private int count;
+	private String description;
 	
 	
 	public int getCsno() {
@@ -78,6 +71,12 @@ COUNT               NUMBER(38)
 	}
 	public void setCount(int count) {
 		this.count = count;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	

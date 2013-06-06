@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import fm.weplayfootball.common.utils.EmailValidator;
+import fm.weplayfootball.common.utils.ImageUtil;
 import fm.weplayfootball.persistence.domain.Member;
 import fm.weplayfootball.persistence.domain.MemberAuthCd;
 import fm.weplayfootball.persistence.mapper.GroundsMapper;
@@ -168,7 +172,9 @@ public class SignupController {
 	@RequestMapping(value="/signup", method=RequestMethod.POST)
 	public String signup(
 			@Valid SignupForm form, 
-			BindingResult formBinding, WebRequest request) {
+			BindingResult formBinding, 
+			HttpServletRequest req,
+			WebRequest request) {
 
 		if (formBinding.hasErrors()) {
 			return null;
@@ -188,8 +194,22 @@ public class SignupController {
 			}
 		}
 
-		ProfileImageUploader.upload( env.getProperty("fileupload.profile"), form );
+		MultipartFile img = form.getAtchFile();
+		try {
+			
+			ImageUtil.save(img, 
+					req.getSession().getServletContext().getRealPath("/resources/profile"), 
+					form.getMemail()+"."+FilenameUtils.getExtension(img.getOriginalFilename()));
 
+			ImageUtil.save(img, 
+					req.getSession().getServletContext().getRealPath("/resources/profile"), 
+					"T_"+form.getMemail()+"."+FilenameUtils.getExtension(img.getOriginalFilename()),
+					200, 200);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		Member member = createMember(form, formBinding);
 		if (member != null) {
 			SignInUtils.signin(member.getMemail());

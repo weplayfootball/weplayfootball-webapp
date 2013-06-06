@@ -2,12 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="fm.weplayfootball.persistence.mapper.GroundsMapper">
-
-<!-- <  &lt;   > &gt; -->
+<mapper namespace="fm.weplayfootball.persistence.mapper.ClubInfoMapper">
 
   <cache />
-
 
   <select id="getCsno" resultType="int">
 	 SELECT csno_seq.nextval csno FROM DUAL
@@ -23,6 +20,7 @@
 	      , CMAKERNAME
 	      , IMAGE
 	      , COUNT
+	      , DESCRIPTION
 	   FROM CLUB_INFO
 	  WHERE CNAME = #{cname}
   	</select>
@@ -37,6 +35,7 @@
 	      , CMAKERNAME
 	      , IMAGE
 	      , COUNT
+	      , DESCRIPTION
 	   FROM CLUB_INFO
 	  WHERE CSNO = #{csno}
   	</select>
@@ -50,6 +49,7 @@
 	          select CI.csno, 
 	                 CI.cname, 
 	                 CI.clocal, 
+	                 CI.image,
 	                 CR.month, 
 	                 CR.year, 
 	                 CR.total,
@@ -60,7 +60,8 @@
 	                 	   and cmLevel != 'XA' 
 	                 	   and cmLevel != 'QA' 
 	                 	   and cmcsno = CI.csno
-	                 ) members
+	                 ) members,
+	                 CI.description
 	            from club_info CI
 	               , club_rank CR
 	           where CI.csno = CR.csno
@@ -79,10 +80,13 @@
 				    CI.clocal
 				  </when>
 				  <when test="sortName == 'total'">
-				    CR.total
+				    CR.total DESC
+				  </when>
+				  <when test="sortName == 'cname'">
+				    CI.cname
 				  </when>
 				  <otherwise>
-				    CI.clocal
+				    CI.cname
 				  </otherwise>
 				</choose>
 	            ) a
@@ -99,6 +103,7 @@
 	          select CI.csno, 
 	                 CI.cname, 
 	                 CI.clocal, 
+	                 CI.image,
 	                 CR.month, 
 	                 CR.year, 
 	                 CR.total,
@@ -109,7 +114,8 @@
 	                 	   and cmLevel != 'XA' 
 	                 	   and cmLevel != 'QA' 
 	                 	   and cmcsno = CI.csno
-	                 ) members
+	                 ) members,
+	                 CI.description
 	            from club_info CI
 	               , club_rank CR
 	               , (
@@ -152,11 +158,11 @@
 	insert into club_info(
 		csno	,cname	,clocal,
 		ctime	,cip	,cmaker,
-		cmakername
+		cmakername, description, image
 	) values (
-		csno_seq.nextval	,#{cname,jdbcType=VARCHAR}	,#{mlocal,jdbcType=VARCHAR},
+		csno_seq.nextval	,#{cname,jdbcType=VARCHAR}	,#{clocal,jdbcType=VARCHAR},
 		to_char(sysdate, 'yyyymmddhh24miss')	,#{cip,jdbcType=VARCHAR} ,#{cmaker,jdbcType=NUMERIC},
-		#{cmakername,jdbcType=VARCHAR}
+		#{cmakername,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}
 	)
   </insert>
 

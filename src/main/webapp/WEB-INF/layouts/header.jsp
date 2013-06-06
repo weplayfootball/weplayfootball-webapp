@@ -52,6 +52,7 @@
                     		<li><a href="<c:url value="/signin"/>">Login</a></li>
 			    		</c:otherwise>
 			    	</c:choose>  
+                    <li><a href="<c:url value="/club"/>">Club</a></li>     
                     <li><a href="<c:url value="/public/contact"/>">Contact</a></li>     
                 </ul>
                 </div><!-- /nav-collapse -->                                

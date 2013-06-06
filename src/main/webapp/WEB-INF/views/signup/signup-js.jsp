@@ -33,8 +33,6 @@ $(document).ready(function(){;
 			return false;
 		}
 		
-		$("#alert_placeholder").fadeOut(500);
-		
 		var values = $(this).serialize();
 		$.ajax({
 			url: '<c:url value="/signup/auth"/>',
@@ -45,6 +43,12 @@ $(document).ready(function(){;
 					$("#bySNS").hide();
 					$("#byEmail").hide();
 					$("#doneEmailAuth").show();
+
+					$("#alert_placeholder").fadeOut(500);
+					
+				}else{
+					bootstrap_alert.warning(data.message, 'error');
+					$('#email').val('');
 				}
 			},
 			error:function(){

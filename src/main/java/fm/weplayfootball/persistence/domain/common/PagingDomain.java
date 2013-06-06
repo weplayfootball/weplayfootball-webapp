@@ -1,7 +1,11 @@
 package fm.weplayfootball.persistence.domain.common;
 
-public class PagingDomain {
+import java.io.Serializable;
+
+public class PagingDomain implements Serializable {
 	
+	private static final long serialVersionUID = -1337665389942207640L;
+
 	private int pageSize = 20;
 	private int pageNum;
 	

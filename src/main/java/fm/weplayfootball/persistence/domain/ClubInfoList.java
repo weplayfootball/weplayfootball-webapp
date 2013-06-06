@@ -11,6 +11,7 @@ public class ClubInfoList extends PagingDomain{
 	private int year;
 	private int total;
 	private int members;
+	private String description;
 	
 	public int getCsno() {
 		return csno;
@@ -53,6 +54,12 @@ public class ClubInfoList extends PagingDomain{
 	}
 	public void setMembers(int members) {
 		this.members = members;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	
