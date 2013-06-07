@@ -1,14 +1,17 @@
 package fm.weplayfootball.web.signup;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -32,6 +35,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import fm.weplayfootball.common.InvalidAccessException;
+import fm.weplayfootball.common.utils.AuthCdGenerator;
 import fm.weplayfootball.common.utils.EmailValidator;
 import fm.weplayfootball.common.utils.ImageUtil;
 import fm.weplayfootball.persistence.domain.Member;
@@ -57,6 +62,7 @@ public class SignupController {
 
 	@Autowired private Environment 			env;
 	@Autowired private EmailValidator 		emailValidator;
+	@Autowired private AuthCdGenerator		authCdGenerator;
 
 	static final Logger logger = Logger.getLogger(SignupController.class); 
 
@@ -87,7 +93,7 @@ public class SignupController {
 			String authCd 	= request.getParameter("auth");
 			if(StringUtils.hasText(authCd)){
 
-				MemberAuthCd memberAuthCd = memberAuthCdMapper.read(email, authCd);
+				MemberAuthCd memberAuthCd = memberAuthCdMapper.read(email, authCd, MemberAuthCd.TYPE_AUTH);
 
 				if(memberAuthCd != null && StringUtils.hasText(memberAuthCd.getMemail())){
 					SignupForm form = new SignupForm();
@@ -123,12 +129,13 @@ public class SignupController {
 		}
 
 
-		String authCd = generateAuthPassword();
+		String authCd = authCdGenerator.generateAuthPassword();
 
 		MemberAuthCd memberAuthcd = new MemberAuthCd();
 		memberAuthcd.setMname	(name);
 		memberAuthcd.setMemail	(email);
 		memberAuthcd.setMauthcd	(authCd);
+		memberAuthcd.setType	(MemberAuthCd.TYPE_AUTH);
 
 		try {
 			memberAuthCdMapper.insert(memberAuthcd);
@@ -155,12 +162,10 @@ public class SignupController {
 			String textHtml = VelocityEngineUtils.mergeTemplateIntoString(
 					velocityEngine, "fm/weplayfootball/web/signup/EmailAuthenticationHtml.vm", "UTF-8", model);
 
-			logger.debug(textHtml);
-
 			helper.setText(textHtml, true);
 
 			mailSender.send(message);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResultAuthCd("error", e.getMessage());
@@ -174,7 +179,7 @@ public class SignupController {
 			@Valid SignupForm form, 
 			BindingResult formBinding, 
 			HttpServletRequest req,
-			WebRequest request) {
+			WebRequest request) throws IllegalStateException, IOException, InvalidAccessException {
 
 		if (formBinding.hasErrors()) {
 			return null;
@@ -183,33 +188,36 @@ public class SignupController {
 		if ( StringUtils.isEmpty(form.getAuthcd())){
 			Connection<?> connection = ProviderSignInUtils.getConnection(request);
 			if(StringUtils.isEmpty(connection.fetchUserProfile().getEmail())){
-				return null;
+				throw new InvalidAccessException();
 			}
 			form.setMemail(connection.fetchUserProfile().getEmail());
 		}else{
-			MemberAuthCd memberAuthCd = memberAuthCdMapper.read(form.getMemail(), form.getAuthcd());
+			MemberAuthCd memberAuthCd = memberAuthCdMapper.read(form.getMemail(), form.getAuthcd(), MemberAuthCd.TYPE_AUTH);
 
 			if(memberAuthCd == null || StringUtils.isEmpty(memberAuthCd.getMemail())){
-				return null;
+				throw new InvalidAccessException();
 			}
+			
+			// auth 코드 삭제.
+			memberAuthCdMapper.delete(form.getMemail(), MemberAuthCd.TYPE_AUTH);
 		}
 
+		/* FILE UPLOAD */
 		MultipartFile img = form.getAtchFile();
-		try {
-			
-			ImageUtil.save(img, 
-					req.getSession().getServletContext().getRealPath("/resources/profile"), 
-					form.getMemail()+"."+FilenameUtils.getExtension(img.getOriginalFilename()));
+		if(img != null && !img.isEmpty() && ImageUtil.isImageContentType(img.getContentType())){
+			String directory 	= req.getSession().getServletContext().getRealPath("/resources/club");
+			String fileName		= form.getMemail()+"."+FilenameUtils.getExtension(img.getOriginalFilename());
 
-			ImageUtil.save(img, 
-					req.getSession().getServletContext().getRealPath("/resources/profile"), 
-					"T_"+form.getMemail()+"."+FilenameUtils.getExtension(img.getOriginalFilename()),
-					200, 200);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+			File dir = new File(directory);
+			if(!dir.exists()) dir.mkdirs();
+
+			File file = new File(directory+File.separator+fileName);
+			img.transferTo(file);
+
+			Thumbnails.of(file).size(200, 200).toFile(directory+File.separator+"T_"+fileName);
 		}
-		
+
+		/* CREATE MEMBER DATA */
 		Member member = createMember(form, formBinding);
 		if (member != null) {
 			SignInUtils.signin(member.getMemail());
@@ -226,27 +234,9 @@ public class SignupController {
 			memberMapper.insert(member);
 			return member;
 		} catch (DuplicateKeyException e) {
-			formBinding.rejectValue("mname", "user.duplicateUsername", "already in use");
+			formBinding.rejectValue("mname", "user.duplicateUsername", "이미 가입된 이메일 입니다.");
 			return null;
 		}
-	}
-
-	private String generateAuthPassword(){
-		Random rand = new Random(System.currentTimeMillis());  
-		int randomindex =0;
-		int r = 0;
-		String rr = "";
-		String fullpass = "";
-
-		for(randomindex=0;randomindex<12;randomindex++){
-			r = 0; 
-			rr = ""; 
-			r = rand.nextInt(9)+1; //1이상, 9이하
-			rr = Integer.toString(r);
-			fullpass += rr;
-		}
-
-		return fullpass;
 	}
 
 }

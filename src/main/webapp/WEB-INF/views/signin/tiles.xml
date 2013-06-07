@@ -8,4 +8,9 @@
 		<put-attribute name="javascript" value="/WEB-INF/views/signin/signin-js.jsp" />
 	</definition>
 
+	<definition name="signin/password" extends="page-wFooter">
+		<put-attribute name="content" value="/WEB-INF/views/signin/password.jsp" />
+		<put-attribute name="javascript" value="/WEB-INF/views/signin/password-js.jsp" />
+	</definition>
+
 </tiles-definitions>

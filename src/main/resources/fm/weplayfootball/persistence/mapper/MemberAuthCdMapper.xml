@@ -7,20 +7,27 @@
   <cache />
   
   <select id="read" parameterType="string" resultType="MemberAuthCd">
-	select * from memberauthcd where memail = #{memail} and mauthcd = #{mauthcd}
+	select * from memberauthcd where memail = #{memail} and mauthcd = #{mauthcd} and type = #{type}
   </select>
 
   <insert id="insert" parameterType="MemberAuthCd">
     INSERT INTO memberauthcd
-      (	 mname, memail, mauthcd, created )
+      (	 mname, memail, type, mauthcd, created )
     values
-      (	#{mname}, #{memail}, #{mauthcd}, SYSDATE )
+      (	#{mname}, #{memail}, #{type}, #{mauthcd}, SYSDATE )
   </insert>
 
-  <insert id="update" parameterType="MemberAuthCd">
+  <update id="update" parameterType="MemberAuthCd">
     UPDATE memberauthcd SET 
-      mname = #{mname}, mauthcd = #{mauthcd}, updated = SYSDATE
-	WHERE memail = #{memail}
-  </insert>
+           mname = #{mname}, mauthcd = #{mauthcd}, updated = SYSDATE
+	 WHERE memail 	= #{memail}
+	   AND type 		= #{type}
+  </update>
+
+  <delete id="delete" parameterType="string">
+    DELETE FROM memberauthcd 
+  	 WHERE memail 	= #{memail}
+	   AND type 	= #{type}
+  </delete>
 
 </mapper>

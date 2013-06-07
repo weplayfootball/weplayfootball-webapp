@@ -74,7 +74,7 @@
                 </div>
                 <br/>
                 <h5>암호를 잊으셨나요? </h5>
-                <p><a href="<c:url value="/public/password"/>" class="color-green">여기</a> 에서 비밀번호를 초기화 할 수 있습니다.</p>
+                <p><a href="#forgetPasswordModel" class="color-green" data-toggle="modal"><strong>여기</strong></a> 에서 비밀번호를 초기화 할 수 있습니다.</p>
             </form>
             
         </c:otherwise>
@@ -90,3 +90,33 @@
 <form name="fb_signin" id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
 <input type="hidden" name="scope" value="email,publish_stream,user_photos,offline_access" />
 </form>
+
+<!-- Modal -->
+<div id="forgetPasswordModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="forgetPasswordModelLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="forgetPasswordModelLabel headline">암호 변경하기</h3>
+  </div>
+  <div class="modal-body">
+  	<div id="forgetPassword_step01">
+	  	<p>
+	  		가입시 입력하신 본인의 이메일로,  비밀번호를 변경할 수 있는 정보를 발송해 드립니다.
+	  	</p>
+	    <div class="input-prepend">
+	        <span class="add-on"><i class="icon-envelope"></i></span>
+	        <input id="memailForPassword" name="memailForPassword" type="text" class="input-xlarge" placeholder="Email Address" />
+	    </div>
+	    <div id="alert_placeholder"></div>
+    </div>
+    <div id="forgetPassword_step02" class="hide">
+    	<hr/>
+    	<h4>메일 발송되었습니다. 메일을 확인해주세요.</h4>
+    	<hr/>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">취소</button>
+    <button class="btn-u" id="btnMailfogetPassword">메일발송</button>
+  </div>
+</div>
+

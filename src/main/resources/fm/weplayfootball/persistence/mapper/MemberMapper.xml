@@ -32,7 +32,7 @@
       )
   </insert>
 
-  <insert id="update" parameterType="Member">
+  <update id="update" parameterType="Member">
     UPDATE MEMBER SET 
       mname 	= #{mname}, 
       memail	= #{memail}, 
@@ -44,16 +44,20 @@
       mip 		= , 
       mposition	= , 
       mlocal	= , 
-      mintro
-      )
+      mintro    
     WHERE msno = #{msno} 
-    values
-      (	msno_seq.nextval			, #{mname} 						, #{memail},
-      	#{mpasswd,jdbcType=VARCHAR} , #{muid,jdbcType=VARCHAR} 		, #{mtel,jdbcType=VARCHAR},
-      	'DA'						, #{mimage,jdbcType=VARCHAR}	, #{mimagesize,jdbcType=NUMERIC} ,
-      	#{mip,jdbcType=VARCHAR} 	, #{mposition,jdbcType=VARCHAR}	, #{mlocal,jdbcType=VARCHAR}, 
-      	#{mintro,jdbcType=VARCHAR}
-      )
-  </insert>
+  </update>
+
+  <update id="updatePasswordByEmail" parameterType="string">
+    UPDATE MEMBER 
+       SET mpasswd 	= #{mpasswd}
+     WHERE memail	= #{memail}
+  </update>
+
+  <update id="updatePassword" parameterType="string">
+    UPDATE MEMBER 
+       SET mpasswd 	= #{mpasswd}
+     WHERE memail	= #{memail}
+  </update>
 
 </mapper>

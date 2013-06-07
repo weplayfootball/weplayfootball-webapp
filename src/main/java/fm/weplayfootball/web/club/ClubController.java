@@ -1,11 +1,14 @@
 package fm.weplayfootball.web.club;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import fm.weplayfootball.common.NotImageFilesException;
 import fm.weplayfootball.common.utils.ImageUtil;
 import fm.weplayfootball.persistence.domain.ClubInfo;
 import fm.weplayfootball.persistence.domain.ClubInfoList;
@@ -49,7 +51,6 @@ public class ClubController {
 			@RequestParam(value="pageNum",	required=false, defaultValue="1") int pageNum
 			) {
 
-
 		SearchCondition searchCond = new SearchCondition();
 		if(!StringUtils.isEmpty(clocal) || !StringUtils.isEmpty(cname)){
 			searchCond.setSrchType	(StringUtils.isEmpty(clocal)?"cname":"clocal");
@@ -72,31 +73,32 @@ public class ClubController {
 			@Valid ClubForm param, 
 			BindingResult formBinding, 
 			HttpServletRequest request,
-			HttpSession session) {
-		
+			HttpSession session) throws IllegalStateException, IOException {
+
 		ClubInfo clubInfo = clubInfoMapper.getByCname(param.getCname());
-		if(clubInfo != null) formBinding.addError(new ObjectError("cname","이미 사용중인 클럼 이름입니다."));
-		
+		if(clubInfo != null) formBinding.rejectValue("mname", "club.duplicateClubName", "이미 사용중인 클럼 이름입니다.");
+
 		if (formBinding.hasErrors()) return null;
-		
+
 		MultipartFile img = param.getEmblemImage();
 
 		int csno = clubInfoMapper.getCsno();
-		try {
-			System.out.println(request.getSession().getServletContext().getRealPath("/resources/club"));
-			ImageUtil.save(img, 
-					request.getSession().getServletContext().getRealPath("/resources/club"), 
-					csno+"."+FilenameUtils.getExtension(img.getOriginalFilename()));
 
-			ImageUtil.save(img, 
-					request.getSession().getServletContext().getRealPath("/resources/club"), 
-					"T_"+csno+"."+FilenameUtils.getExtension(img.getOriginalFilename()),
-					200, 200);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+		/* FILE UPLOAD */
+		if(img != null && !img.isEmpty() && ImageUtil.isImageContentType(img.getContentType())){
+			String directory 	= request.getSession().getServletContext().getRealPath("/resources/club");
+			String fileName		= csno+"."+FilenameUtils.getExtension(img.getOriginalFilename());
+
+			File dir = new File(directory);
+			if(!dir.exists()) dir.mkdirs();
+
+			File file = new File(directory+File.separator+fileName);
+			img.transferTo(file);
+
+			Thumbnails.of(file).size(150, 150).toFile(directory+File.separator+"T_"+fileName);
 		}
-		
+
+		/* CREATE CLUB DATA */
 		Member member = (Member) session.getAttribute("MEMBER");
 
 		clubInfo = new ClubInfo();

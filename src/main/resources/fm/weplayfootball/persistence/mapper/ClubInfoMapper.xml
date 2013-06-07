@@ -50,9 +50,9 @@
 	                 CI.cname, 
 	                 CI.clocal, 
 	                 CI.image,
-	                 CR.month, 
-	                 CR.year, 
-	                 CR.total,
+	                 NVL(CR.month,0), 
+	                 NVL(CR.year,0), 
+	                 NVL(CR.total,0),
 	                 (
 	                 	select count(*) as cnt 
 	                 	  from clubmember 
@@ -64,7 +64,7 @@
 	                 CI.description
 	            from club_info CI
 	               , club_rank CR
-	           where CI.csno = CR.csno
+	           where CI.csno = CR.csno(+)
 	           
 				<if test="srchType == 'cname'">
 	             and CI.cname = #{srchValue}
