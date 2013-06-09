@@ -13,4 +13,9 @@
 		<put-attribute name="javascript" value="/WEB-INF/views/club/new-js.jsp" />
 	</definition>
 
+	<definition name="club/info" extends="page">
+		<put-attribute name="content" value="/WEB-INF/views/club/info.jsp" />
+		<put-attribute name="javascript" value="/WEB-INF/views/club/info-js.jsp" />
+	</definition>
+
 </tiles-definitions>

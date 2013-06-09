@@ -36,6 +36,8 @@ public class SignupForm {
 	private int mimagesize;
 	
 	private MultipartFile atchFile;
+	
+	private String profileImageUrl;
 
 
 	public MultipartFile getAtchFile() {
@@ -104,6 +106,12 @@ public class SignupForm {
 	}
 	public void setAuthcd(String authcd) {
 		this.authcd = authcd;
+	}
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
 	}
 	
 	public Member toMember(){

@@ -85,7 +85,10 @@ public class SignupController {
 
 		if (connection != null) {
 			request.setAttribute("message", new Message(MessageType.INFO, connection.fetchUserProfile().getUsername()+" 님 " + StringUtils.capitalize(connection.getKey().getProviderId()) + " 과 연결되었으나, 아직 WePlayFootball.fm 에 가입되지 않았습니다. <br/ > 계속 신규 가입하시거나, <a href='/signout'><strong>여기</strong></a> 를 클릭하여 다른 방법으로 로그인/신규가입 하세요."), WebRequest.SCOPE_REQUEST);
-			return SignupForm.fromProviderUser(connection.fetchUserProfile());
+			SignupForm form = SignupForm.fromProviderUser(connection.fetchUserProfile());
+			System.out.println("connection.getImageUrl() : "+connection.getImageUrl());
+			form.setProfileImageUrl(connection.getImageUrl());
+			return form;
 
 		} else {
 
@@ -205,7 +208,7 @@ public class SignupController {
 		/* FILE UPLOAD */
 		MultipartFile img = form.getAtchFile();
 		if(img != null && !img.isEmpty() && ImageUtil.isImageContentType(img.getContentType())){
-			String directory 	= req.getSession().getServletContext().getRealPath("/resources/club");
+			String directory 	= req.getSession().getServletContext().getRealPath("/resources/member");
 			String fileName		= form.getMemail()+"."+FilenameUtils.getExtension(img.getOriginalFilename());
 
 			File dir = new File(directory);
@@ -214,7 +217,7 @@ public class SignupController {
 			File file = new File(directory+File.separator+fileName);
 			img.transferTo(file);
 
-			Thumbnails.of(file).size(200, 200).toFile(directory+File.separator+"T_"+fileName);
+			Thumbnails.of(file).size(50, 50).toFile(directory+File.separator+"T_"+fileName);
 		}
 
 		/* CREATE MEMBER DATA */

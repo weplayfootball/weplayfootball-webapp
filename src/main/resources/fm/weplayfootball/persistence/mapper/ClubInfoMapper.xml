@@ -29,7 +29,7 @@
 	 SELECT CSNO
 	      , CNAME
 	      , CLOCAL
-	      , CTIME
+	      , substr(ctime,0,4)||'-'||substr(ctime,5,2)||'-'||substr(ctime,7,2) AS CTIME
 	      , CIP
 	      , CMAKER
 	      , CMAKERNAME

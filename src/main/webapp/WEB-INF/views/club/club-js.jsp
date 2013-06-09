@@ -64,12 +64,14 @@
 				r = r + '<div class="span6 booking-blocks">';
 				r = r + '	<div class="pull-left booking-img">';
 				r = r + ' 		<img src="/resources/club/'+v.image+'">';
-				r = r + '     	<ul class="unstyled">';
-				r = r + '			<li><i class="icon-map-marker"></i>'+v.clocal+'</li>';
-				r = r + '		</ul>';
 				r = r + '	</div>';
 				r = r + '	<div style="overflow:hidden;">';
-				r = r + '		<h2><a href="#">'+v.cname+'</a></h2>';
+				r = r + '		<h3><a href="#">'+v.cname+'</a></h3>';
+				r = r + '<ul class="unstyled inline blog-info">';
+				r = r + '<li><i class="icon-calendar"></i> February 02, 2013</li>';
+				r = r + '<li><i class="icon-pencil"></i> '+v.clocal+'</li>';
+				r = r + '<li><i class="icon-group"></i> '+v.members+'</li>';
+				r = r + '</ul>';
 				r = r + '		<p>'+v.description+'</p>'; 
 				r = r + '	</div>';
 				r = r + '</div>';

@@ -99,7 +99,14 @@
 							</s:bind>
 		                    <div class="control-group">
 		                        <label class="control-label" for="inputEmail">Email</label>
-		                        <div class="controls"><h4><strong>${signupForm.memail}</strong></h4></div>
+		                        <div class="controls">
+		                        	<h4>
+			                        	<c:if test="${not empty signupForm.profileImageUrl}">
+			                        		&nbsp;<img src="${signupForm.profileImageUrl}">&nbsp;&nbsp;
+			                        	</c:if>
+			                        	<strong>${signupForm.memail}</strong>
+		                        	</h4>
+		                        </div>
 		                    </div>
 		                    <div class="control-group">
 		                    	<form:label path="mname" cssClass="control-label">이름  <span class="color-red">*</span> <form:errors path="mname" cssClass="label label-important" /></form:label>
@@ -115,7 +122,36 @@
 		                    <div class="control-group">
 		                        <label class="control-label" for="profileFile">사진</label>
 		                        <div class="controls">
-		                        	<input type="file" name="profileFile" class="border-radius-none" />
+		                        
+		                        
+		                        
+									<div class="fileupload fileupload-new" data-provides="fileupload">
+									  <div class="fileupload-new thumbnail" >
+									  
+			                        	<c:choose>
+											<c:when test="${not empty signupForm.profileImageUrl}">
+			                        			<img src="${signupForm.profileImageUrl}">
+			                        		</c:when>
+											<c:otherwise>
+									  			<img src="http://www.placehold.it/100x80/EFEFEF/AAAAAA&text=no+image" />
+									  		</c:otherwise>
+									  	</c:choose>
+									  </div>
+									  
+									  <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 100px; max-height: 80px; line-height: 20px;">
+									  </div>
+									  
+									  <div>
+									    <span class="btn btn-file">
+										    <span class="fileupload-new">이미지 등록</span>
+										    <span class="fileupload-exists">이미지 변경</span>
+										    <input type="file" name="profileFile"/>
+										</span>
+									    <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">이미지 삭제</a>
+									  </div>
+									</div>
+		                        
+		                        	<!--  input type="file" name="profileFile" class="border-radius-none" / -->
 		                        </div>
 		                    </div>
 			            </div>
@@ -155,10 +191,11 @@
 					        <input type="checkbox" checked name="checkusermsg">유저로부터의 경기초청수신<br>
 					        <input type="checkbox" checked name="checkaddmsg">weplayfootball 소식수신
 	                    	</label -->
-		                    <button class="btn-u pull-right" type="submit"><strong>등록하기</strong> </button>&nbsp;&nbsp;&nbsp;
+		                    <button class="btn-u pull-left" type="submit"><strong>등록하기</strong> </button>&nbsp;&nbsp;&nbsp;
+		                    이미 가입하셨다면, <a href="<c:url value="/signin"/>" class="color-green"><strong>로그인 화면</strong></a>으로 이동하세요.
 	                    </div> 
  						<div class="span12">
-	                    	  이미 가입하셨다면, <a href="<c:url value="/signin"/>" class="color-green"><strong>로그인 화면</strong></a>으로 이동하세요.
+	                    	  
 	                   	</div>
 					<form:hidden path="memail" value="${signupForm.memail}"/>
 					<form:hidden path="authcd" value="${signupForm.authcd}"/>
