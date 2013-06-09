@@ -160,7 +160,7 @@
 		ctime	,cip	,cmaker,
 		cmakername, description, image
 	) values (
-		csno_seq.nextval	,#{cname,jdbcType=VARCHAR}	,#{clocal,jdbcType=VARCHAR},
+		#{csno}	,#{cname,jdbcType=VARCHAR}	,#{clocal,jdbcType=VARCHAR},
 		to_char(sysdate, 'yyyymmddhh24miss')	,#{cip,jdbcType=VARCHAR} ,#{cmaker,jdbcType=NUMERIC},
 		#{cmakername,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}
 	)

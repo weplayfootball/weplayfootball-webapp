@@ -115,7 +115,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">취소</button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true" id="btnClose">취소</button>
     <button class="btn-u" id="btnMailfogetPassword">메일발송</button>
   </div>
 </div>

@@ -76,7 +76,7 @@ public class ClubController {
 			HttpSession session) throws IllegalStateException, IOException {
 
 		ClubInfo clubInfo = clubInfoMapper.getByCname(param.getCname());
-		if(clubInfo != null) formBinding.rejectValue("mname", "club.duplicateClubName", "이미 사용중인 클럼 이름입니다.");
+		if(clubInfo != null) formBinding.rejectValue("cname", "club.duplicateClubName", "이미 사용중인 클럼 이름입니다.");
 
 		if (formBinding.hasErrors()) return null;
 
@@ -84,6 +84,8 @@ public class ClubController {
 
 		int csno = clubInfoMapper.getCsno();
 
+		clubInfo = new ClubInfo();
+		
 		/* FILE UPLOAD */
 		if(img != null && !img.isEmpty() && ImageUtil.isImageContentType(img.getContentType())){
 			String directory 	= request.getSession().getServletContext().getRealPath("/resources/club");
@@ -96,20 +98,21 @@ public class ClubController {
 			img.transferTo(file);
 
 			Thumbnails.of(file).size(150, 150).toFile(directory+File.separator+"T_"+fileName);
+			
+			clubInfo.setImage("T_"+fileName);
 		}
 
 		/* CREATE CLUB DATA */
 		Member member = (Member) session.getAttribute("MEMBER");
 
-		clubInfo = new ClubInfo();
 		clubInfo.setCsno		(csno);
 		clubInfo.setCmaker		(member.getMsno());
 		clubInfo.setCmakername	(member.getMname());
 		clubInfo.setCip			(request.getRemoteAddr());
 		clubInfo.setCname		(param.getCname());
-		clubInfo.setImage		(param.getImage());
 		clubInfo.setClocal		(param.getClocalSi());
-
+		clubInfo.setDescription	(param.getDescription());
+		
 		clubInfoMapper.insert(clubInfo);
 
 		return "redirect:/club/info/"+csno;

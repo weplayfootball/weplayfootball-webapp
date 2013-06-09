@@ -45,7 +45,7 @@ public class FindPasswordController {
 	@Autowired private EmailValidator 		emailValidator;
 	@Autowired private AuthCdGenerator		authCdGenerator;
 
-	@RequestMapping(value="/p/password", method=RequestMethod.GET)
+	@RequestMapping(value="/signin/password", method=RequestMethod.GET)
 	public ForgetPasswordForm forgetPassword(
 			@RequestParam("auth") 	String authCd,
 			@RequestParam("email") 	String email,
@@ -70,7 +70,7 @@ public class FindPasswordController {
 		return new ForgetPasswordForm();
 	}
 
-	@RequestMapping(value="/p/password", method=RequestMethod.POST)
+	@RequestMapping(value="/signin/password", method=RequestMethod.POST)
 	public String changeForgetPassword(
 			@Valid ForgetPasswordForm form, 
 			BindingResult formBinding, 
@@ -92,11 +92,10 @@ public class FindPasswordController {
 		return "redirect:/signin";
 	}
 
-	@RequestMapping(value="/p/forgetPassword", method=RequestMethod.POST)
+	@RequestMapping(value="/signin/forgetPassword", method=RequestMethod.POST)
 	@ResponseBody
 	public ResultChangePasswordMail signinPassword(@RequestParam("email") String email) {
 		ResultChangePasswordMail result = new ResultChangePasswordMail("ok");
-System.out.println(email);
 		if(!emailValidator.validate(email)){
 			return new ResultChangePasswordMail("error", "메일 주소가 잘못되었습니다.");
 		}

@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%-- 
 
 --%>
@@ -17,40 +20,44 @@
 	<div class="container">		
 		<div class="row-fluid margin-bottom-60">
 		
-		<c:if test="${not empty message}">
-			<div class="alert alert-error">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>${message.type.cssClass}</strong>&nbsp;&nbsp;${message.text}
-            </div>
-		</c:if>
+			<c:if test="${not empty message}">
+				<div class="alert alert-error">
+	                <button type="button" class="close" data-dismiss="alert">&times;</button>
+	                <strong>${message.type.cssClass}</strong>&nbsp;&nbsp;${message.text}
+	            </div>
+			</c:if>
 		
+			<c:if test="${not empty forgetPasswordForm.authcd}">
+			
 			<c:url value="/signin/password" var="passwordUrl" />
 			<form:form id="signinPassword" action="${passwordUrl}" method="post" modelAttribute="forgetPasswordForm" cssClass="log-page">
-			        
-			    <h4><strong>이메일</strong>로 로그인하기</h4>   
-                 
-                <div class="control-group">
-                    <label class="control-label" for="inputEmail">Email</label>
-                    <div class="controls"><h4><strong>${forgetPasswordForm.memail}</strong></h4></div>
-                </div>
-                
+			
+				<p class="text-warning text-right">
+                    ${forgetPasswordForm.memail}
+                </p>
+            	    
 	            <div class="control-group">
-	            	<form:label path="mpasswd" cssClass="control-label">암호 <form:errors path="mpasswd" cssClass="label label-important" /></form:label>
+	            	<form:label path="mpasswd" cssClass="control-label"><span class="label label-warning"><i class="icon-ok"></i></span> 암호 <form:errors path="mpasswd" cssClass="label label-important" /></form:label>
 					<div class="controls"><form:password path="mpasswd"  cssClass="border-radius-none" /></div>
 	            </div>
                 <div class="control-group">
-	            	<form:label path="mpasswdconfirm" cssClass="control-label">암호 <form:errors path="mpasswdconfirm" cssClass="label label-important" /></form:label>
+	            	<form:label path="mpasswdconfirm" cssClass="control-label"><span class="label label-warning"><i class="icon-ok"></i></span> 암호 확인 <form:errors path="mpasswdconfirm" cssClass="label label-important" /></form:label>
 					<div class="controls"><form:password path="mpasswdconfirm"  cssClass="border-radius-none" /></div>
 	            </div>
 
+            	<form:errors path="passwordValid" cssClass="label label-important" element="div" />
+            	
                 <div class="controls form-inline">
-                    <button class="btn-u pull-right" type="submit">암호 변경</button>
+                    <button class="btn-u pull-right" type="submit">암호 변경하기</button>
                 </div>
+                <br/>
 					
 			<form:hidden path="memail" value="${forgetPasswordForm.memail}"/>
 			<form:hidden path="authcd" value="${forgetPasswordForm.authcd}"/>
             </form:form>
           
+          	</c:if>
+          	
         </div><!--/row-fluid-->
 	</div><!--/container-->		
 </div><!--/body-->

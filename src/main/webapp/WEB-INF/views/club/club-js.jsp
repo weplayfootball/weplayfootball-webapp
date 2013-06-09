@@ -63,7 +63,7 @@
 
 				r = r + '<div class="span6 booking-blocks">';
 				r = r + '	<div class="pull-left booking-img">';
-				r = r + ' 		<img src="http://img.naver.net/static/www/u/2013/0604/nmms_20143229.jpg">';
+				r = r + ' 		<img src="/resources/club/'+v.image+'">';
 				r = r + '     	<ul class="unstyled">';
 				r = r + '			<li><i class="icon-map-marker"></i>'+v.clocal+'</li>';
 				r = r + '		</ul>';

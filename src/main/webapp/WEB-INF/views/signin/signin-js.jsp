@@ -17,9 +17,9 @@
 		
 		$('#btnMailfogetPassword').click(function (e) {
 			$.ajax({
-				url: '<c:url value="/p/forgetPassword"/>',
+				url: '<c:url value="/signin/forgetPassword"/>',
 				type: "POST",
-				data: {mail: $('#memailForPassword').val()},
+				data: {email: $('#memailForPassword').val()},
 				success: function(data){
 					if(data.status == "ok"){
 						$("#btnMailfogetPassword").fadeOut(1000);
@@ -27,6 +27,7 @@
 						$("#forgetPassword_step02").show();
 
 						$("#alert_placeholder").fadeOut(1000);
+						$("#btnClose").html('확인');
 						
 					}else{
 						bootstrap_alert.warning(data.message, 'error');

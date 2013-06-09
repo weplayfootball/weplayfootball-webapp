@@ -19,17 +19,16 @@ public class ForgetPasswordForm {
 	@Size(min = 6, message = "암호는 6자 이상 이어야 합니다.")
 	private String mpasswdconfirm;
 
-	
+
 	@AssertTrue(message="입력된 암호는 암호 확인과 다릅니다.")
 	public boolean isPasswordValid(){
-		if (mpasswd == null) {
-			return false;
-		} else {
+		if(mpasswd != null && mpasswdconfirm != null){
 			return mpasswd.equals(mpasswdconfirm);
 		}
+		return true;
 	}
 
-	
+
 	public String getMemail() {
 		return memail;
 	}
